@@ -139,10 +139,16 @@ useEffect(() => {
     }
   }, [selectedEvent])
 
-  // Handle direct booking from Events page
+// Handle direct booking from Events page or Movies page
   useEffect(() => {
     if (eventId) {
-      const event = events.find(e => e.id === parseInt(eventId))
+      let event = events.find(e => e.id === parseInt(eventId))
+      
+      // If not found in events, check if it's a movie booking
+      if (!event && eventId.startsWith('movie-')) {
+        event = events.find(e => e.id === eventId)
+      }
+      
       if (event) {
         setSelectedEvent(event)
         setIsBookingMode(true)

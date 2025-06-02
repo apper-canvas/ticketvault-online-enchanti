@@ -93,8 +93,8 @@ const Movies = () => {
     return matchesSearch && matchesGenre
   })
 
-  const handleBookNow = (movie) => {
-    toast.success(`Booking initiated for ${movie.title}!`)
+const handleBookNow = (movie) => {
+    navigate(`/booking/movie-${movie.id}`)
   }
 
   const handleViewDetails = (movie) => {
