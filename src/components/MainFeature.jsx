@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import ApperIcon from './ApperIcon'
 
 const MainFeature = () => {
+const { eventId } = useParams()
+  const navigate = useNavigate()
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [selectedSeats, setSelectedSeats] = useState([])
   const [isBookingMode, setIsBookingMode] = useState(false)
@@ -130,11 +133,22 @@ const MainFeature = () => {
 
   const [seats, setSeats] = useState([])
 
-  useEffect(() => {
+useEffect(() => {
     if (selectedEvent) {
       setSeats(generateSeats(selectedEvent.id))
     }
   }, [selectedEvent])
+
+  // Handle direct booking from Events page
+  useEffect(() => {
+    if (eventId) {
+      const event = events.find(e => e.id === parseInt(eventId))
+      if (event) {
+        setSelectedEvent(event)
+        setIsBookingMode(true)
+      }
+    }
+  }, [eventId])
 
   // Filter events
   const filteredEvents = events.filter(event => {
@@ -389,9 +403,9 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
         </div>
       </motion.div>
 
-      {/* Event Booking Interface */}
 {/* Event Booking Interface */}
       <AnimatePresence mode="wait">
+        {!isBookingMode ? (
           <motion.div
             key="events-grid"
             initial={{ opacity: 0 }}
@@ -500,13 +514,17 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
                   </div>
                 </div>
               </div>
-              <motion.button
+<motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  setIsBookingMode(false)
-                  setSelectedEvent(null)
-                  setSelectedSeats([])
+                  if (eventId) {
+                    navigate('/events')
+                  } else {
+                    setIsBookingMode(false)
+                    setSelectedEvent(null)
+                    setSelectedSeats([])
+                  }
                 }}
                 className="mt-4 sm:mt-0 px-4 py-2 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 rounded-xl transition-colors focus-ring"
               >
