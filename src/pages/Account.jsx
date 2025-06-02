@@ -426,6 +426,7 @@ Status: ${booking.status}
                         key={booking.id} 
                         booking={booking} 
                         onViewDetails={() => handleBookingDetails(booking)}
+                        onDownloadTicket={handleDownloadTicket}
                       />
                     ))}
                   </div>
