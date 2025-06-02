@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import ApperIcon from './ApperIcon'
 
-const BookingCard = ({ booking, onViewDetails }) => {
+const BookingCard = ({ booking, onViewDetails, onDownloadTicket }) => {
+  const [downloadingTicket, setDownloadingTicket] = useState(false)
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed':
@@ -115,15 +118,28 @@ const BookingCard = ({ booking, onViewDetails }) => {
                 onClick={() => onViewDetails(booking)}
                 className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                View Details
+View Details
               </motion.button>
               {booking.status === 'confirmed' && (
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2 bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-900 dark:text-white text-sm font-medium rounded-lg transition-colors"
+                  onClick={async () => {
+                    if (onDownloadTicket) {
+                      setDownloadingTicket(true)
+                      try {
+                        await onDownloadTicket(booking)
+                      } catch (error) {
+                        console.error('Failed to download ticket:', error)
+                      } finally {
+                        setDownloadingTicket(false)
+                      }
+                    }
+                  }}
+                  disabled={downloadingTicket}
+                  className="px-4 py-2 bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-900 dark:text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
                 >
-                  Download Ticket
+                  <span>{downloadingTicket ? 'Generating...' : 'Download Ticket'}</span>
                 </motion.button>
               )}
             </div>

@@ -7,10 +7,11 @@ import BookingCard from '../components/BookingCard'
 
 const Account = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [activeTab, setActiveTab] = useState('profile')
+const [activeTab, setActiveTab] = useState('profile')
   const [isLoading, setIsLoading] = useState(false)
   const [showBookingDetails, setShowBookingDetails] = useState(false)
   const [selectedBooking, setSelectedBooking] = useState(null)
+  const [downloadingTicket, setDownloadingTicket] = useState(false)
   const navigate = useNavigate()
 
   // User profile state
@@ -115,7 +116,45 @@ const Account = () => {
         setProfile(prev => ({ ...prev, avatar: e.target.result }))
         toast.success('Avatar updated successfully!')
       }
-      reader.readAsDataURL(file)
+reader.readAsDataURL(file)
+    }
+  }
+
+  const handleDownloadTicket = async (booking) => {
+    setDownloadingTicket(true)
+    
+    try {
+      // Simulate ticket generation/download
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // Create a simple ticket content
+      const ticketContent = `
+TICKET - ${booking.eventName}
+Booking ID: ${booking.id}
+Venue: ${booking.venue}
+Date: ${new Date(booking.date).toLocaleDateString()}
+Time: ${booking.time}
+Seats: ${booking.seats.join(', ')}
+Total: $${booking.totalAmount}
+Status: ${booking.status}
+      `.trim()
+      
+      // Create and download file
+      const blob = new Blob([ticketContent], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `ticket-${booking.id}.txt`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+      toast.success('Ticket downloaded successfully!')
+    } catch (error) {
+      toast.error('Failed to download ticket. Please try again.')
+    } finally {
+      setDownloadingTicket(false)
     }
   }
 
@@ -601,15 +640,17 @@ const Account = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+<div className="flex flex-col sm:flex-row gap-3 pt-4">
                 {selectedBooking.status === 'confirmed' && (
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 flex items-center justify-center space-x-2"
+                    onClick={() => handleDownloadTicket(selectedBooking)}
+                    disabled={downloadingTicket}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ApperIcon name="Download" className="w-5 h-5" />
-                    <span>Download Ticket</span>
+                    <span>{downloadingTicket ? 'Generating...' : 'Download Ticket'}</span>
                   </motion.button>
                 )}
                 <motion.button
