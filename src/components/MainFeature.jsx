@@ -1,37 +1,111 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import ApperIcon from './ApperIcon'
 
 const MainFeature = () => {
-const { eventId } = useParams()
+  const { eventId } = useParams()
   const navigate = useNavigate()
+
+  // Booking states
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [selectedSeats, setSelectedSeats] = useState([])
-  const [isBookingMode, setIsBookingMode] = useState(false)
-  const [isPaymentMode, setIsPaymentMode] = useState(false)
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [selectedLocation, setSelectedLocation] = useState('all')
+  const [showPayment, setShowPayment] = useState(false)
   const [paymentData, setPaymentData] = useState({
-    paymentMethod: 'card',
-    cardholderName: '',
     cardNumber: '',
     expiryDate: '',
     cvv: '',
-    email: '',
-    phone: '',
-    billingAddress: {
-      street: '',
-      city: '',
-      state: '',
-      zipCode: ''
-    }
+    holderName: ''
   })
+  const [currentStep, setCurrentStep] = useState('booking')
+  const [bookingConfirmed, setBookingConfirmed] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
-  // Mock event data
+  // Sample movies data (same as Movies page for consistency)
+  const movies = [
+    {
+      id: 1,
+      title: "Guardians of the Galaxy Vol. 3",
+      genre: "action",
+      rating: "PG-13",
+      duration: "2h 30m",
+      theater: "AMC Empire 25",
+      showtimes: ["2:00 PM", "5:30 PM", "9:00 PM"],
+      price: "$15.99",
+      image: "https://images.unsplash.com/photo-1489599316546-1cf6b2da2c95?w=400&h=600&fit=crop",
+      description: "The legendary Star-Lord and his team embark on their final adventure."
+    },
+    {
+      id: 2,
+      title: "The Little Mermaid",
+      genre: "romance",
+      rating: "PG",
+      duration: "2h 15m",
+      theater: "Regal Cinemas",
+      showtimes: ["1:30 PM", "4:45 PM", "8:15 PM"],
+      price: "$14.99",
+      image: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop",
+      description: "A young mermaid makes a deal with a sea witch to walk on land."
+    },
+    {
+      id: 3,
+      title: "Scream VI",
+      genre: "horror",
+      rating: "R",
+      duration: "2h 3m",
+      theater: "Cinemark XD",
+      showtimes: ["3:15 PM", "6:45 PM", "10:30 PM"],
+      price: "$16.99",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      description: "The Ghostface killer returns to terrorize a new generation."
+    },
+    {
+      id: 4,
+      title: "John Wick: Chapter 4",
+      genre: "action",
+      rating: "R",
+      duration: "2h 49m",
+      theater: "IMAX Theater",
+      showtimes: ["1:00 PM", "5:00 PM", "9:30 PM"],
+      price: "$19.99",
+      image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?w=400&h=600&fit=crop",
+      description: "John Wick faces his most deadly adversaries yet."
+    },
+    {
+      id: 5,
+      title: "Spider-Man: Across the Spider-Verse",
+      genre: "action",
+      rating: "PG",
+      duration: "2h 20m",
+      theater: "Dolby Cinema",
+      showtimes: ["2:30 PM", "6:00 PM", "9:45 PM"],
+      price: "$17.99",
+      image: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=600&fit=crop",
+      description: "Miles Morales journeys across the multiverse."
+    },
+    {
+      id: 6,
+      title: "The Super Mario Bros. Movie",
+      genre: "comedy",
+      rating: "PG",
+      duration: "1h 32m",
+      theater: "AMC Theater",
+      showtimes: ["12:00 PM", "3:30 PM", "7:00 PM"],
+      price: "$13.99",
+      image: "https://images.unsplash.com/photo-1604659989175-ef2d01a0fdc6?w=400&h=600&fit=crop",
+      description: "Mario and Luigi embark on a magical adventure."
+    }
+  ]
+
+  // Function to get movie by ID
+  const getMovieById = (movieId) => {
+    const id = parseInt(movieId)
+    return movies.find(movie => movie.id === id)
+  }
+
+  // Sample events data (same as Events page for consistency)
+// Sample events data
   const events = [
     {
       id: 1,
@@ -47,33 +121,9 @@ const { eventId } = useParams()
     },
     {
       id: 2,
-      title: "Comedy Night Special",
-      category: "Comedy",
-      location: "Comedy Cellar NYC",
-      date: "2024-03-18",
-      time: "9:30 PM",
-      price: 45,
-      image: "https://images.unsplash.com/photo-1605832420495-5c4bd706b6a0?w=400&h=300&fit=crop",
-      totalSeats: 80,
-      availableSeats: 23
-    },
-    {
-      id: 3,
-      title: "NBA Finals Game 4",
-      category: "Sports",
-      location: "Barclays Center",
-      date: "2024-03-20",
-      time: "7:00 PM",
-      price: 250,
-      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop",
-      totalSeats: 200,
-      availableSeats: 12
-    },
-    {
-      id: 4,
-      title: "Broadway Musical: Hamilton",
+      title: "Broadway Show Night",
       category: "Theater",
-      location: "Richard Rodgers Theatre",
+location: "Richard Rodgers Theatre",
       date: "2024-03-22",
       time: "8:00 PM",
       price: 175,
@@ -82,7 +132,19 @@ const { eventId } = useParams()
       availableSeats: 8
     },
     {
-      id: 5,
+      id: 3,
+      title: "Comedy Night Live",
+      category: "Comedy",
+      location: "Comedy Cellar",
+      date: "2024-03-20",
+      time: "9:00 PM",
+      price: 45,
+      image: "https://images.unsplash.com/photo-1595147389795-37094173bfd8?w=400&h=300&fit=crop",
+      totalSeats: 80,
+      availableSeats: 23
+    },
+    {
+      id: 4,
       title: "Jazz Festival Opening",
       category: "Concert",
       location: "Blue Note",
@@ -94,7 +156,7 @@ const { eventId } = useParams()
       availableSeats: 34
     },
     {
-      id: 6,
+      id: 5,
       title: "Tech Conference 2024",
       category: "Conference",
       location: "Jacob Javits Center",
@@ -107,6 +169,34 @@ const { eventId } = useParams()
     }
   ]
 
+  // Additional state variables
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedLocation, setSelectedLocation] = useState('all')
+  const [isBookingMode, setIsBookingMode] = useState(false)
+  const [isPaymentMode, setIsPaymentMode] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+
+  // Initialize payment data with proper structure
+  const [paymentDataState, setPaymentDataState] = useState({
+    paymentMethod: 'card',
+    cardholderName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    email: '',
+    phone: '',
+    billingAddress: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: ''
+    }
+  })
+
+  // Update paymentData to use the state
+  const paymentDataUpdated = paymentDataState
+
   // Generate seating chart data
   const generateSeats = (eventId) => {
     const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
@@ -117,12 +207,13 @@ const { eventId } = useParams()
       for (let seatNum = 1; seatNum <= seatsPerRow; seatNum++) {
         const isOccupied = Math.random() < 0.3 // 30% occupied
         const isPremium = rowIndex < 3 // First 3 rows are premium
+        const basePrice = events.find(e => e.id === eventId)?.price || 50
         seats.push({
           id: `${row}${seatNum}`,
           row,
           number: seatNum,
           category: isPremium ? 'premium' : 'regular',
-          price: isPremium ? events.find(e => e.id === eventId)?.price * 1.5 : events.find(e => e.id === eventId)?.price,
+          price: isPremium ? basePrice * 1.5 : basePrice,
           isAvailable: !isOccupied,
           isSelected: false
         })
@@ -130,31 +221,61 @@ const { eventId } = useParams()
     })
     return seats
   }
+const [seats, setSeats] = useState([])
 
-  const [seats, setSeats] = useState([])
+  // Initialize booking based on eventId
+  useEffect(() => {
+    if (eventId) {
+      // Check if this is a movie booking
+      if (eventId.startsWith('movie-')) {
+        const movieId = eventId.replace('movie-', '')
+        const movie = getMovieById(movieId)
+        if (movie) {
+          // Transform movie data to event format for booking system
+          const transformedEvent = {
+            id: movie.id,
+            title: movie.title,
+            date: new Date().toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            }),
+            time: movie.showtimes[0], // Use first showtime
+            location: movie.theater,
+            category: movie.genre,
+            price: parseFloat(movie.price.replace('$', '')),
+            image: movie.image,
+            description: movie.description,
+            isMovie: true,
+            totalSeats: 120,
+            availableSeats: Math.floor(Math.random() * 50) + 20
+          }
+          setSelectedEvent(transformedEvent)
+          setIsBookingMode(true)
+        } else {
+          toast.error('Movie not found')
+          navigate('/movies')
+        }
+      } else {
+        // Handle regular event booking
+        const eventIdNum = parseInt(eventId)
+        const event = events.find(e => e.id === eventIdNum)
+        if (event) {
+          setSelectedEvent(event)
+          setIsBookingMode(true)
+        } else {
+          toast.error('Event not found')
+          navigate('/events')
+        }
+      }
+    }
+  }, [eventId, navigate])
 
-useEffect(() => {
+  useEffect(() => {
     if (selectedEvent) {
       setSeats(generateSeats(selectedEvent.id))
     }
   }, [selectedEvent])
-
-// Handle direct booking from Events page or Movies page
-  useEffect(() => {
-    if (eventId) {
-      let event = events.find(e => e.id === parseInt(eventId))
-      
-      // If not found in events, check if it's a movie booking
-      if (!event && eventId.startsWith('movie-')) {
-        event = events.find(e => e.id === eventId)
-      }
-      
-      if (event) {
-        setSelectedEvent(event)
-        setIsBookingMode(true)
-      }
-    }
-  }, [eventId])
 
   // Filter events
   const filteredEvents = events.filter(event => {
@@ -165,7 +286,6 @@ useEffect(() => {
     
     return matchesSearch && matchesCategory && matchesLocation
   })
-
   const handleSeatClick = (seatId) => {
     setSeats(prevSeats => 
       prevSeats.map(seat => 
@@ -174,8 +294,9 @@ useEffect(() => {
           : seat
       )
     )
+)
     
-const seat = seats.find(s => s.id === seatId)
+    const seat = seats.find(s => s.id === seatId)
     if (seat && seat.isAvailable) {
       if (seat.isSelected) {
         setSelectedSeats(prev => prev.filter(s => s !== seatId))
@@ -184,11 +305,10 @@ const seat = seats.find(s => s.id === seatId)
       }
     }
   }
-
-  const updatePaymentData = (field, value) => {
+const updatePaymentData = (field, value) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
-      setPaymentData(prev => ({
+      setPaymentDataState(prev => ({
         ...prev,
         [parent]: {
           ...prev[parent],
@@ -196,7 +316,7 @@ const seat = seats.find(s => s.id === seatId)
         }
       }))
     } else {
-      setPaymentData(prev => ({
+      setPaymentDataState(prev => ({
         ...prev,
         [field]: value
       }))
@@ -204,46 +324,46 @@ const seat = seats.find(s => s.id === seatId)
   }
 
   const validatePaymentData = () => {
-    if (paymentData.paymentMethod === 'card') {
-      if (!paymentData.cardholderName.trim()) {
+    if (paymentDataUpdated.paymentMethod === 'card') {
+      if (!paymentDataUpdated.cardholderName.trim()) {
         toast.error('Please enter cardholder name')
         return false
       }
-      if (!paymentData.cardNumber.replace(/\s/g, '')) {
+      if (!paymentDataUpdated.cardNumber.replace(/\s/g, '')) {
         toast.error('Please enter card number')
         return false
       }
-      if (!paymentData.expiryDate) {
+      if (!paymentDataUpdated.expiryDate) {
         toast.error('Please enter expiry date')
         return false
       }
-      if (!paymentData.cvv) {
+      if (!paymentDataUpdated.cvv) {
         toast.error('Please enter CVV')
         return false
       }
     }
     
-    if (!paymentData.email.trim()) {
+    if (!paymentDataUpdated.email.trim()) {
       toast.error('Please enter email address')
       return false
     }
-    if (!paymentData.phone.trim()) {
+    if (!paymentDataUpdated.phone.trim()) {
       toast.error('Please enter phone number')
       return false
     }
-    if (!paymentData.billingAddress.street.trim()) {
+    if (!paymentDataUpdated.billingAddress.street.trim()) {
       toast.error('Please enter street address')
-      return false
+return false
     }
-    if (!paymentData.billingAddress.city.trim()) {
+    if (!paymentDataUpdated.billingAddress.city.trim()) {
       toast.error('Please enter city')
       return false
     }
-    if (!paymentData.billingAddress.state.trim()) {
+    if (!paymentDataUpdated.billingAddress.state.trim()) {
       toast.error('Please enter state')
       return false
     }
-    if (!paymentData.billingAddress.zipCode.trim()) {
+    if (!paymentDataUpdated.billingAddress.zipCode.trim()) {
       toast.error('Please enter ZIP code')
       return false
     }
@@ -251,6 +371,13 @@ const seat = seats.find(s => s.id === seatId)
     return true
   }
 
+  const handleBackToEvents = () => {
+    if (selectedEvent?.isMovie) {
+      navigate('/movies')
+    } else {
+      navigate('/events')
+    }
+  }
   const handlePayment = async () => {
     if (!validatePaymentData()) {
       return
@@ -272,9 +399,10 @@ const seat = seats.find(s => s.id === seatId)
       // Reset all states
       setSelectedSeats([])
       setSelectedEvent(null)
+setSelectedEvent(null)
       setIsBookingMode(false)
       setIsPaymentMode(false)
-      setPaymentData({
+      setPaymentDataState({
         paymentMethod: 'card',
         cardholderName: '',
         cardNumber: '',
@@ -295,7 +423,6 @@ const seat = seats.find(s => s.id === seatId)
     } finally {
       setIsProcessingPayment(false)
     }
-  }
 
   const handleBooking = () => {
     if (selectedSeats.length === 0) {
@@ -310,9 +437,9 @@ const seat = seats.find(s => s.id === seatId)
     if (selectedSeats.length === 0) {
       toast.error('Please select at least one seat')
       return
-    }
+}
     
-const totalAmount = selectedSeats.reduce((total, seatId) => {
+    const totalAmount = selectedSeats.reduce((total, seatId) => {
       const seat = seats.find(s => s.id === seatId)
       return total + (seat ? seat.price : 0)
     }, 0)
@@ -322,7 +449,6 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
     setSelectedEvent(null)
     setIsBookingMode(false)
   }
-
   const categories = ['all', 'Concert', 'Theater', 'Sports', 'Comedy', 'Conference']
   const locations = ['all', 'Manhattan', 'Brooklyn', 'Queens']
 
@@ -420,19 +546,32 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
             transition={{ duration: 0.5 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
           >
-            {filteredEvents.map((event, index) => (
+{filteredEvents.map((event, index) => (
               <motion.div
                 key={event.id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                className="glass-card overflow-hidden cursor-pointer group"
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="glass-card overflow-hidden group cursor-pointer hover:shadow-neon transition-all duration-300"
                 onClick={() => {
                   setSelectedEvent(event)
                   setIsBookingMode(true)
                 }}
               >
+                <div className="relative">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleBackToEvents()
+                    }}
+                    className="absolute top-4 left-4 z-10 flex items-center space-x-2 px-3 py-2 bg-white/90 dark:bg-surface-800/90 backdrop-blur-sm border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-all duration-300 focus-ring"
+                  >
+                    <ApperIcon name="ArrowLeft" className="w-4 h-4" />
+                    <span className="text-sm">Back</span>
+                  </motion.button>
+                </div>
                 {/* Event Image */}
                 <div className="relative h-48 sm:h-56 overflow-hidden">
                   <img
@@ -700,7 +839,7 @@ return total + (seat ? seat.price : 0)
                     {[
                       { id: 'card', label: 'Credit Card', icon: '💳' },
                       { id: 'paypal', label: 'PayPal', icon: '🅿️' },
-                      { id: 'apple', label: 'Apple Pay', icon: '🍎' }
+{ id: 'apple', label: 'Apple Pay', icon: '🍎' }
                     ].map(method => (
                       <motion.button
                         key={method.id}
@@ -708,7 +847,7 @@ return total + (seat ? seat.price : 0)
                         whileTap={{ scale: 0.98 }}
                         onClick={() => updatePaymentData('paymentMethod', method.id)}
                         className={`p-4 border-2 rounded-xl transition-all duration-300 ${
-                          paymentData.paymentMethod === method.id
+                          paymentDataUpdated.paymentMethod === method.id
                             ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                             : 'border-surface-200 dark:border-surface-700 hover:border-primary-300'
                         }`}
@@ -720,8 +859,8 @@ return total + (seat ? seat.price : 0)
                   </div>
                 </div>
 
-                {/* Credit Card Form */}
-                {paymentData.paymentMethod === 'card' && (
+{/* Credit Card Form */}
+                {paymentDataUpdated.paymentMethod === 'card' && (
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-surface-900 dark:text-white">Card Information</h4>
                     
@@ -731,7 +870,7 @@ return total + (seat ? seat.price : 0)
                       </label>
                       <input
                         type="text"
-                        value={paymentData.cardholderName}
+                        value={paymentDataUpdated.cardholderName}
                         onChange={(e) => updatePaymentData('cardholderName', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="John Doe"
@@ -742,9 +881,9 @@ return total + (seat ? seat.price : 0)
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Card Number *
                       </label>
-                      <input
+<input
                         type="text"
-                        value={paymentData.cardNumber}
+                        value={paymentDataUpdated.cardNumber}
                         onChange={(e) => updatePaymentData('cardNumber', e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '))}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="1234 5678 9012 3456"
@@ -759,7 +898,7 @@ return total + (seat ? seat.price : 0)
                         </label>
                         <input
                           type="text"
-                          value={paymentData.expiryDate}
+                          value={paymentDataUpdated.expiryDate}
                           onChange={(e) => updatePaymentData('expiryDate', e.target.value.replace(/\D/g, '').replace(/(\d{2})(?=\d)/, '$1/'))}
                           className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                           placeholder="MM/YY"
@@ -772,7 +911,7 @@ return total + (seat ? seat.price : 0)
                         </label>
                         <input
                           type="text"
-                          value={paymentData.cvv}
+                          value={paymentDataUpdated.cvv}
                           onChange={(e) => updatePaymentData('cvv', e.target.value.replace(/\D/g, ''))}
                           className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                           placeholder="123"
@@ -792,9 +931,9 @@ return total + (seat ? seat.price : 0)
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Email Address *
                       </label>
-                      <input
+<input
                         type="email"
-                        value={paymentData.email}
+                        value={paymentDataUpdated.email}
                         onChange={(e) => updatePaymentData('email', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="john@example.com"
@@ -806,7 +945,7 @@ return total + (seat ? seat.price : 0)
                       </label>
                       <input
                         type="tel"
-                        value={paymentData.phone}
+                        value={paymentDataUpdated.phone}
                         onChange={(e) => updatePaymentData('phone', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="+1 (555) 123-4567"
@@ -823,9 +962,9 @@ return total + (seat ? seat.price : 0)
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       Street Address *
                     </label>
-                    <input
+<input
                       type="text"
-                      value={paymentData.billingAddress.street}
+                      value={paymentDataUpdated.billingAddress.street}
                       onChange={(e) => updatePaymentData('billingAddress.street', e.target.value)}
                       className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                       placeholder="123 Main Street"
@@ -839,7 +978,7 @@ return total + (seat ? seat.price : 0)
                       </label>
                       <input
                         type="text"
-                        value={paymentData.billingAddress.city}
+                        value={paymentDataUpdated.billingAddress.city}
                         onChange={(e) => updatePaymentData('billingAddress.city', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="New York"
@@ -851,7 +990,7 @@ return total + (seat ? seat.price : 0)
                       </label>
                       <input
                         type="text"
-                        value={paymentData.billingAddress.state}
+                        value={paymentDataUpdated.billingAddress.state}
                         onChange={(e) => updatePaymentData('billingAddress.state', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="NY"
@@ -863,7 +1002,7 @@ return total + (seat ? seat.price : 0)
                       </label>
                       <input
                         type="text"
-                        value={paymentData.billingAddress.zipCode}
+                        value={paymentDataUpdated.billingAddress.zipCode}
                         onChange={(e) => updatePaymentData('billingAddress.zipCode', e.target.value)}
                         className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
                         placeholder="10001"
