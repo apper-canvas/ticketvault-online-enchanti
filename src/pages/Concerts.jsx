@@ -8,7 +8,8 @@ const Concerts = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('all')
-
+  const [showDetails, setShowDetails] = useState(false)
+  const [selectedConcert, setSelectedConcert] = useState(null)
   const genres = ['all', 'rock', 'pop', 'hip-hop', 'country', 'electronic', 'jazz', 'classical']
 
   const concerts = [
@@ -100,14 +101,34 @@ const Concerts = () => {
     return matchesSearch && matchesGenre
   })
 
-  const handleBookNow = (concert) => {
-    toast.success(`Booking tickets for ${concert.title}!`)
+const handleBookNow = (concert) => {
+    toast.success(`Navigating to booking for ${concert.title}!`)
+    navigate(`/booking/${concert.id}`)
   }
 
   const handleViewDetails = (concert) => {
-    toast.info(`Viewing details for ${concert.title}`)
+    setSelectedConcert(concert)
+    setShowDetails(true)
   }
 
+  const handleCloseDetails = () => {
+    setShowDetails(false)
+    setSelectedConcert(null)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape' && showDetails) {
+      handleCloseDetails()
+    }
+  }
+
+  // Add keyboard event listener
+  useState(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showDetails])
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-primary-50/30 to-secondary-50/20 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Header */}
@@ -305,8 +326,176 @@ const Concerts = () => {
               Try adjusting your search terms or genre filter
             </p>
           </motion.div>
-        )}
+)}
       </div>
+
+      {/* Concert Details Modal */}
+      {showDetails && selectedConcert && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-surface-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={handleCloseDetails}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="relative">
+              <img
+                src={selectedConcert.image}
+                alt={selectedConcert.title}
+                className="w-full h-64 object-cover rounded-t-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-900/80 via-transparent to-transparent rounded-t-2xl" />
+              <button
+                onClick={handleCloseDetails}
+                className="absolute top-4 right-4 p-2 bg-surface-900/50 backdrop-blur-sm rounded-full text-white hover:bg-surface-900/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                aria-label="Close modal"
+              >
+                <ApperIcon name="X" className="w-5 h-5" />
+              </button>
+              <div className="absolute bottom-6 left-6 right-6">
+                <span className="inline-block px-3 py-1 bg-primary-500 text-white text-sm font-medium rounded-full capitalize mb-3">
+                  {selectedConcert.genre}
+                </span>
+                <h2 className="text-3xl font-bold text-white mb-2">{selectedConcert.artist}</h2>
+                <p className="text-xl text-surface-200">{selectedConcert.title}</p>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-8">
+              {/* Concert Info Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-4">Concert Details</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="Calendar" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>{selectedConcert.date} at {selectedConcert.time}</span>
+                    </div>
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="MapPin" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>{selectedConcert.venue}</span>
+                    </div>
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="Navigation" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>{selectedConcert.location}</span>
+                    </div>
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="Music" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>{selectedConcert.genre.charAt(0).toUpperCase() + selectedConcert.genre.slice(1)} Music</span>
+                    </div>
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="Clock" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>Approximately 2.5 hours (including intermission)</span>
+                    </div>
+                    <div className="flex items-center text-surface-700 dark:text-surface-300">
+                      <ApperIcon name="Users" className="w-5 h-5 mr-3 text-primary-600" />
+                      <span>All ages welcome</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-4">Venue Information</h3>
+                  <div className="space-y-3 text-surface-700 dark:text-surface-300">
+                    <p><strong className="text-surface-900 dark:text-surface-100">Capacity:</strong> 20,000 seats</p>
+                    <p><strong className="text-surface-900 dark:text-surface-100">Parking:</strong> Available on-site ($25)</p>
+                    <p><strong className="text-surface-900 dark:text-surface-100">Food & Drinks:</strong> Multiple concession stands</p>
+                    <p><strong className="text-surface-900 dark:text-surface-100">Accessibility:</strong> Wheelchair accessible seating available</p>
+                    <p><strong className="text-surface-900 dark:text-surface-100">Bag Policy:</strong> Small bags and purses allowed</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Artist Bio */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-4">About the Artist</h3>
+                <p className="text-surface-700 dark:text-surface-300 leading-relaxed">
+                  {selectedConcert.description} This highly anticipated tour promises to deliver an unforgettable 
+                  experience with stunning visual effects, incredible live performances, and all your favorite hits. 
+                  Don't miss this opportunity to see one of today's most celebrated artists perform live!
+                </p>
+              </div>
+
+              {/* Setlist Preview */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-4">Expected Setlist Preview</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <h4 className="font-semibold text-surface-900 dark:text-surface-100 mb-2">Popular Hits</h4>
+                    <ul className="text-sm text-surface-700 dark:text-surface-300 space-y-1">
+                      <li>• Greatest Hit #1</li>
+                      <li>• Chart Topper</li>
+                      <li>• Fan Favorite</li>
+                      <li>• Latest Single</li>
+                    </ul>
+                  </div>
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <h4 className="font-semibold text-surface-900 dark:text-surface-100 mb-2">Special Features</h4>
+                    <ul className="text-sm text-surface-700 dark:text-surface-300 space-y-1">
+                      <li>• Opening act performance</li>
+                      <li>• Special guest appearances</li>
+                      <li>• Interactive light show</li>
+                      <li>• Encore performance</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ticket Information */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-4">Ticket Information</h3>
+                <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-surface-900 dark:text-surface-100">Starting Price</span>
+                    <span className="text-2xl font-bold text-primary-600">{selectedConcert.price}</span>
+                  </div>
+                  <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+                    Prices vary by seating section. VIP packages and premium seating available.
+                  </p>
+                  <ul className="text-sm text-surface-700 dark:text-surface-300 space-y-1">
+                    <li>• General Admission: {selectedConcert.price}</li>
+                    <li>• Reserved Seating: Starting at ${parseInt(selectedConcert.price.replace('$', '')) + 30}.99</li>
+                    <li>• VIP Package: Starting at ${parseInt(selectedConcert.price.replace('$', '')) + 80}.99</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleCloseDetails()
+                    handleBookNow(selectedConcert)
+                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                >
+                  Book Tickets Now
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCloseDetails}
+                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-surface-500 focus:ring-offset-2"
+                >
+                  Close
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
