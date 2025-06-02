@@ -7,9 +7,26 @@ const MainFeature = () => {
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [selectedSeats, setSelectedSeats] = useState([])
   const [isBookingMode, setIsBookingMode] = useState(false)
+  const [isPaymentMode, setIsPaymentMode] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedLocation, setSelectedLocation] = useState('all')
+  const [paymentData, setPaymentData] = useState({
+    paymentMethod: 'card',
+    cardholderName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    email: '',
+    phone: '',
+    billingAddress: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: ''
+    }
+  })
 
   // Mock event data
   const events = [
@@ -145,6 +162,118 @@ const MainFeature = () => {
       } else {
         setSelectedSeats(prev => [...prev, seatId])
       }
+}
+  }
+
+  const updatePaymentData = (field, value) => {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.')
+      setPaymentData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }))
+    } else {
+      setPaymentData(prev => ({
+        ...prev,
+        [field]: value
+      }))
+    }
+  }
+
+  const validatePaymentData = () => {
+    if (paymentData.paymentMethod === 'card') {
+      if (!paymentData.cardholderName.trim()) {
+        toast.error('Please enter cardholder name')
+        return false
+      }
+      if (!paymentData.cardNumber.replace(/\s/g, '')) {
+        toast.error('Please enter card number')
+        return false
+      }
+      if (!paymentData.expiryDate) {
+        toast.error('Please enter expiry date')
+        return false
+      }
+      if (!paymentData.cvv) {
+        toast.error('Please enter CVV')
+        return false
+      }
+    }
+    
+    if (!paymentData.email.trim()) {
+      toast.error('Please enter email address')
+      return false
+    }
+    if (!paymentData.phone.trim()) {
+      toast.error('Please enter phone number')
+      return false
+    }
+    if (!paymentData.billingAddress.street.trim()) {
+      toast.error('Please enter street address')
+      return false
+    }
+    if (!paymentData.billingAddress.city.trim()) {
+      toast.error('Please enter city')
+      return false
+    }
+    if (!paymentData.billingAddress.state.trim()) {
+      toast.error('Please enter state')
+      return false
+    }
+    if (!paymentData.billingAddress.zipCode.trim()) {
+      toast.error('Please enter ZIP code')
+      return false
+    }
+    
+    return true
+  }
+
+  const handlePayment = async () => {
+    if (!validatePaymentData()) {
+      return
+    }
+
+    setIsProcessingPayment(true)
+    
+    try {
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      const totalAmount = selectedSeats.reduce((total, seatId) => {
+        const seat = seats.find(s => s.id === seatId)
+        return total + (seat ? seat.price : 0)
+      }, 0) + 7.49
+      
+      toast.success(`Payment successful! Total: $${totalAmount.toFixed(2)} for ${selectedSeats.length} seat(s)`)
+      
+      // Reset all states
+      setSelectedSeats([])
+      setSelectedEvent(null)
+      setIsBookingMode(false)
+      setIsPaymentMode(false)
+      setPaymentData({
+        paymentMethod: 'card',
+        cardholderName: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+        email: '',
+        phone: '',
+        billingAddress: {
+          street: '',
+          city: '',
+          state: '',
+          zipCode: ''
+        }
+      })
+      
+    } catch (error) {
+      toast.error('Payment failed. Please try again.')
+    } finally {
+      setIsProcessingPayment(false)
     }
   }
 
@@ -154,8 +283,18 @@ const MainFeature = () => {
       return
     }
     
+    setIsPaymentMode(true)
+  }
+
+  const handleInitialBooking = () => {
+    if (selectedSeats.length === 0) {
+      toast.error('Please select at least one seat')
+      return
+    }
+    
     const totalAmount = selectedSeats.reduce((total, seatId) => {
       const seat = seats.find(s => s.id === seatId)
+const seat = seats.find(s => s.id === seatId)
       return total + (seat ? seat.price : 0)
     }, 0)
     
@@ -251,7 +390,7 @@ const MainFeature = () => {
         </div>
       </motion.div>
 
-      {/* Event Booking Interface */}
+{/* Event Booking Interface */}
       <AnimatePresence mode="wait">
         {!isBookingMode ? (
           /* Events Grid */
@@ -336,7 +475,7 @@ const MainFeature = () => {
               </motion.div>
             ))}
           </motion.div>
-        ) : (
+        ) : !isPaymentMode ? (
           /* Seat Selection Interface */
           <motion.div
             key="seat-selection"
@@ -483,16 +622,315 @@ const MainFeature = () => {
                     </span>
                   </div>
                 </div>
-                <motion.button
+<motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleBooking}
                   className="w-full px-6 py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-soft transition-all duration-300 hover:shadow-neon focus-ring"
                 >
-                  Confirm Booking
+                  Proceed to Payment
                 </motion.button>
               </motion.div>
             )}
+          </motion.div>
+        ) : (
+          /* Payment Interface */
+          <motion.div
+            key="payment-form"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            className="glass-card p-6 sm:p-8"
+          >
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-white mb-2">
+                  Complete Your Payment
+                </h3>
+                <div className="flex flex-wrap gap-4 text-surface-600 dark:text-surface-400">
+                  <div className="flex items-center">
+                    <span className="text-sm">{selectedEvent?.title}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm">Seats: {selectedSeats.join(', ')}</span>
+                  </div>
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsPaymentMode(false)}
+                className="mt-4 sm:mt-0 px-4 py-2 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 rounded-xl transition-colors focus-ring"
+              >
+                Back to Seats
+              </motion.button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Payment Form */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Payment Method Selection */}
+                <div>
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Payment Method</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { id: 'card', label: 'Credit Card', icon: '💳' },
+                      { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+                      { id: 'apple', label: 'Apple Pay', icon: '🍎' }
+                    ].map(method => (
+                      <motion.button
+                        key={method.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => updatePaymentData('paymentMethod', method.id)}
+                        className={`p-4 border-2 rounded-xl transition-all duration-300 ${
+                          paymentData.paymentMethod === method.id
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            : 'border-surface-200 dark:border-surface-700 hover:border-primary-300'
+                        }`}
+                      >
+                        <div className="text-2xl mb-2">{method.icon}</div>
+                        <div className="text-sm font-medium text-surface-900 dark:text-white">{method.label}</div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Credit Card Form */}
+                {paymentData.paymentMethod === 'card' && (
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-surface-900 dark:text-white">Card Information</h4>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Cardholder Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentData.cardholderName}
+                        onChange={(e) => updatePaymentData('cardholderName', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="John Doe"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Card Number *
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentData.cardNumber}
+                        onChange={(e) => updatePaymentData('cardNumber', e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '))}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="1234 5678 9012 3456"
+                        maxLength="19"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          Expiry Date *
+                        </label>
+                        <input
+                          type="text"
+                          value={paymentData.expiryDate}
+                          onChange={(e) => updatePaymentData('expiryDate', e.target.value.replace(/\D/g, '').replace(/(\d{2})(?=\d)/, '$1/'))}
+                          className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                          placeholder="MM/YY"
+                          maxLength="5"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          CVV *
+                        </label>
+                        <input
+                          type="text"
+                          value={paymentData.cvv}
+                          onChange={(e) => updatePaymentData('cvv', e.target.value.replace(/\D/g, ''))}
+                          className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                          placeholder="123"
+                          maxLength="4"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Contact Information */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-white">Contact Information</h4>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={paymentData.email}
+                        onChange={(e) => updatePaymentData('email', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        value={paymentData.phone}
+                        onChange={(e) => updatePaymentData('phone', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Billing Address */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-white">Billing Address</h4>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      Street Address *
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentData.billingAddress.street}
+                      onChange={(e) => updatePaymentData('billingAddress.street', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                      placeholder="123 Main Street"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentData.billingAddress.city}
+                        onChange={(e) => updatePaymentData('billingAddress.city', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="New York"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        State *
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentData.billingAddress.state}
+                        onChange={(e) => updatePaymentData('billingAddress.state', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="NY"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        ZIP Code *
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentData.billingAddress.zipCode}
+                        onChange={(e) => updatePaymentData('billingAddress.zipCode', e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                        placeholder="10001"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <div className="sticky top-6">
+                  <div className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 p-6 rounded-xl border border-primary-200 dark:border-primary-800">
+                    <h4 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Order Summary</h4>
+                    
+                    <div className="space-y-3 mb-4">
+                      <div className="flex justify-between text-surface-700 dark:text-surface-300">
+                        <span>Event:</span>
+                        <span className="font-medium text-right ml-2">{selectedEvent?.title}</span>
+                      </div>
+                      <div className="flex justify-between text-surface-700 dark:text-surface-300">
+                        <span>Date:</span>
+                        <span className="font-medium">{selectedEvent?.date}</span>
+                      </div>
+                      <div className="flex justify-between text-surface-700 dark:text-surface-300">
+                        <span>Seats:</span>
+                        <span className="font-medium">{selectedSeats.join(', ')}</span>
+                      </div>
+                      <div className="flex justify-between text-surface-700 dark:text-surface-300">
+                        <span>Tickets:</span>
+                        <span className="font-medium">{selectedSeats.length}x</span>
+                      </div>
+                      
+                      <div className="border-t border-surface-200 dark:border-surface-700 pt-3">
+                        <div className="flex justify-between text-surface-700 dark:text-surface-300 mb-2">
+                          <span>Subtotal:</span>
+                          <span className="font-medium">
+                            ${selectedSeats.reduce((total, seatId) => {
+                              const seat = seats.find(s => s.id === seatId)
+                              return total + (seat ? seat.price : 0)
+                            }, 0).toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-surface-700 dark:text-surface-300 mb-2">
+                          <span>Service Fee:</span>
+                          <span className="font-medium">$4.99</span>
+                        </div>
+                        <div className="flex justify-between text-surface-700 dark:text-surface-300 mb-3">
+                          <span>Processing Fee:</span>
+                          <span className="font-medium">$2.50</span>
+                        </div>
+                        <div className="flex justify-between text-lg font-bold text-surface-900 dark:text-white border-t border-surface-200 dark:border-surface-700 pt-3">
+                          <span>Total:</span>
+                          <span>
+                            ${(selectedSeats.reduce((total, seatId) => {
+                              const seat = seats.find(s => s.id === seatId)
+                              return total + (seat ? seat.price : 0)
+                            }, 0) + 7.49).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: isProcessingPayment ? 1 : 1.02 }}
+                      whileTap={{ scale: isProcessingPayment ? 1 : 0.98 }}
+                      onClick={handlePayment}
+                      disabled={isProcessingPayment}
+                      className={`w-full px-6 py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-soft transition-all duration-300 hover:shadow-neon focus-ring ${
+                        isProcessingPayment ? 'opacity-75 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {isProcessingPayment ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Processing Payment...
+                        </div>
+                      ) : (
+                        'Complete Payment'
+                      )}
+                    </motion.button>
+
+                    <div className="mt-4 text-xs text-surface-500 dark:text-surface-400 text-center">
+                      🔒 Your payment information is secure and encrypted
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
