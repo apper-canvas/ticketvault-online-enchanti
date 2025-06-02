@@ -5,9 +5,11 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../components/ApperIcon'
 
 const Sports = () => {
-  const navigate = useNavigate()
+const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSport, setSelectedSport] = useState('all')
+  const [selectedSportEvent, setSelectedSportEvent] = useState(null)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
 
   const sports = ['all', 'football', 'basketball', 'baseball', 'soccer', 'hockey', 'tennis']
 
@@ -101,14 +103,30 @@ const Sports = () => {
     return matchesSearch && matchesSport
   })
 
-  const handleBookNow = (event) => {
-    toast.success(`Booking tickets for ${event.title}!`)
+const handleBookNow = (event) => {
+    toast.success(`Redirecting to booking for ${event.title}!`)
+    navigate(`/booking/${event.id}`)
   }
 
   const handleViewDetails = (event) => {
-    toast.info(`Viewing details for ${event.title}`)
+    setSelectedSportEvent(event)
+    setShowDetailsModal(true)
   }
 
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false)
+    setSelectedSportEvent(null)
+  }
+
+  const formatEventId = (eventId) => {
+    return `sports-${eventId}`
+  }
+
+  const handleQuickBook = (event) => {
+    toast.success(`Quick booking for ${event.title}!`)
+    navigate(`/booking/${formatEventId(event.id)}`)
+    closeDetailsModal()
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-primary-50/30 to-secondary-50/20 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Header */}
@@ -309,7 +327,213 @@ const Sports = () => {
             </p>
           </motion.div>
         )}
-      </div>
+</div>
+
+      {/* Sports Event Details Modal */}
+      {showDetailsModal && selectedSportEvent && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-surface-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={closeDetailsModal}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 50 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="relative">
+              <img
+                src={selectedSportEvent.image}
+                alt={selectedSportEvent.title}
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-900/80 via-transparent to-transparent" />
+              
+              <button
+                onClick={closeDetailsModal}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all"
+              >
+                <ApperIcon name="X" className="w-5 h-5" />
+              </button>
+
+              <div className="absolute bottom-4 left-6 right-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-3 py-1 bg-primary-500 text-white text-sm font-medium rounded-full capitalize">
+                    {selectedSportEvent.sport}
+                  </span>
+                  <span className="px-3 py-1 bg-surface-900/70 text-white text-sm font-medium rounded-full">
+                    {selectedSportEvent.price}
+                  </span>
+                </div>
+                <h2 className="text-3xl font-bold text-white mb-2">{selectedSportEvent.title}</h2>
+                <div className="flex items-center text-white/90 text-sm">
+                  <ApperIcon name="Calendar" className="w-4 h-4 mr-2" />
+                  {selectedSportEvent.date} at {selectedSportEvent.time}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Game Information */}
+              <div>
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-4">Game Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-surface-900 dark:text-white">Home Team</h4>
+                        <p className="text-surface-600 dark:text-surface-300">{selectedSportEvent.teams.home}</p>
+                      </div>
+                      <div className="text-2xl">🏠</div>
+                    </div>
+                  </div>
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-surface-900 dark:text-white">Away Team</h4>
+                        <p className="text-surface-600 dark:text-surface-300">{selectedSportEvent.teams.away}</p>
+                      </div>
+                      <div className="text-2xl">✈️</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Venue Details */}
+              <div>
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-4">Venue Details</h3>
+                <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center text-surface-600 dark:text-surface-300 mb-2">
+                        <ApperIcon name="MapPin" className="w-4 h-4 mr-2 text-primary-500" />
+                        <span className="font-medium text-surface-900 dark:text-white">{selectedSportEvent.venue}</span>
+                      </div>
+                      <div className="flex items-center text-surface-600 dark:text-surface-300">
+                        <ApperIcon name="Navigation" className="w-4 h-4 mr-2 text-primary-500" />
+                        <span>{selectedSportEvent.location}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center text-surface-600 dark:text-surface-300 mb-2">
+                        <ApperIcon name="Users" className="w-4 h-4 mr-2 text-primary-500" />
+                        <span>Capacity: 50,000+ seats</span>
+                      </div>
+                      <div className="flex items-center text-surface-600 dark:text-surface-300">
+                        <ApperIcon name="Wifi" className="w-4 h-4 mr-2 text-primary-500" />
+                        <span>Free WiFi Available</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Game Statistics */}
+              <div>
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-4">Season Statistics</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center bg-surface-50 dark:bg-surface-700 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-primary-600">{selectedSportEvent.teams.home.split(' ').length > 2 ? '12' : '8'}</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Home Wins</div>
+                  </div>
+                  <div className="text-center bg-surface-50 dark:bg-surface-700 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-secondary-600">{selectedSportEvent.teams.away.split(' ').length > 2 ? '9' : '11'}</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Away Wins</div>
+                  </div>
+                  <div className="text-center bg-surface-50 dark:bg-surface-700 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-accent">85%</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Home Advantage</div>
+                  </div>
+                  <div className="text-center bg-surface-50 dark:bg-surface-700 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-yellow-600">4.2</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Avg Rating</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Weather & Conditions (for outdoor sports) */}
+              {(selectedSportEvent.sport === 'football' || selectedSportEvent.sport === 'baseball' || selectedSportEvent.sport === 'soccer') && (
+                <div>
+                  <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-4">Game Day Conditions</h3>
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="flex items-center">
+                        <div className="text-2xl mr-3">☀️</div>
+                        <div>
+                          <div className="font-medium text-surface-900 dark:text-white">Weather</div>
+                          <div className="text-surface-600 dark:text-surface-300">Partly Cloudy, 72°F</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="text-2xl mr-3">💨</div>
+                        <div>
+                          <div className="font-medium text-surface-900 dark:text-white">Wind</div>
+                          <div className="text-surface-600 dark:text-surface-300">5 mph NW</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="text-2xl mr-3">💧</div>
+                        <div>
+                          <div className="font-medium text-surface-900 dark:text-white">Precipitation</div>
+                          <div className="text-surface-600 dark:text-surface-300">0% chance</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Ticket Information */}
+              <div>
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-4">Ticket Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="text-lg font-bold text-surface-900 dark:text-white mb-2">General Admission</div>
+                    <div className="text-2xl font-bold text-primary-600 mb-2">{selectedSportEvent.price}</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Upper level seating</div>
+                  </div>
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="text-lg font-bold text-surface-900 dark:text-white mb-2">Premium</div>
+                    <div className="text-2xl font-bold text-primary-600 mb-2">${Math.round(parseFloat(selectedSportEvent.price.replace('$', '')) * 1.5)}</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Lower level, great views</div>
+                  </div>
+                  <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-4">
+                    <div className="text-lg font-bold text-surface-900 dark:text-white mb-2">VIP</div>
+                    <div className="text-2xl font-bold text-primary-600 mb-2">${Math.round(parseFloat(selectedSportEvent.price.replace('$', '')) * 2.5)}</div>
+                    <div className="text-sm text-surface-600 dark:text-surface-300">Field level, premium access</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleQuickBook(selectedSportEvent)}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg transition-all duration-300 focus-ring"
+                >
+                  Book Tickets Now
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={closeDetailsModal}
+                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-all duration-300 focus-ring"
+                >
+                  Close
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
