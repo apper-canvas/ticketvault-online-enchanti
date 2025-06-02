@@ -155,9 +155,8 @@ const MainFeature = () => {
       )
     )
     
-    const seat = seats.find(s => s.id === seatId)
+const seat = seats.find(s => s.id === seatId)
     if (seat && seat.isAvailable) {
-if (seat && seat.isAvailable) {
       if (seat.isSelected) {
         setSelectedSeats(prev => prev.filter(s => s !== seatId))
       } else {
@@ -165,6 +164,8 @@ if (seat && seat.isAvailable) {
       }
     }
   }
+
+  const updatePaymentData = (field, value) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
       setPaymentData(prev => ({
@@ -389,9 +390,8 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
       </motion.div>
 
       {/* Event Booking Interface */}
+{/* Event Booking Interface */}
       <AnimatePresence mode="wait">
-      <AnimatePresence mode="wait">
-        {!isBookingMode ? (
           <motion.div
             key="events-grid"
             initial={{ opacity: 0 }}
@@ -922,9 +922,9 @@ return total + (seat ? seat.price : 0)
                       )}
                     </motion.button>
 
-                    <div className="mt-4 text-xs text-surface-500 dark:text-surface-400 text-center">
+<div className="mt-4 text-xs text-surface-500 dark:text-surface-400 text-center">
                       🔒 Your payment information is secure and encrypted
-</div>
+                    </div>
                   </div>
                 </div>
               </div>
