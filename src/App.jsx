@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
+import Events from './pages/Events'
 import NotFound from './pages/NotFound'
 import Account from './pages/Account'
 function App() {

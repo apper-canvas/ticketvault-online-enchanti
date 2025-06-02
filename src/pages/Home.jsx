@@ -41,15 +41,15 @@ const Home = () => {
             </motion.div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <motion.a 
+<nav className="hidden md:flex items-center space-x-8">
+              <motion.button 
                 whileHover={{ y: -2 }}
-                href="#" 
-                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors"
+                onClick={() => navigate('/events')}
+                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors focus-ring"
               >
                 Events
-              </motion.a>
-              <motion.a 
+              </motion.button>
+              <motion.a
                 whileHover={{ y: -2 }}
                 href="#" 
                 className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors"
