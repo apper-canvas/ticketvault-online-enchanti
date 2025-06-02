@@ -8,6 +8,8 @@ import Sports from './pages/Sports'
 import Concerts from './pages/Concerts'
 import NotFound from './pages/NotFound'
 import Account from './pages/Account'
+import MainFeature from './components/MainFeature'
+
 function App() {
   return (
 <div className="App">
