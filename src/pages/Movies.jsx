@@ -365,12 +365,13 @@ const handleViewDetails = (movie) => {
               </button>
 
               {/* Movie Title Overlay */}
+{/* Movie Title Overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <div className="flex items-end justify-between">
                   <div>
-                    <h2 className="text-3xl sm:text-4xl font-bold mb-2">{selectedMovie.title}</h2>
-                    <div className="flex items-center gap-4 text-sm">
-                      <span className="px-3 py-1 bg-primary-500 rounded-full font-medium">
+<h2 className="text-3xl sm:text-4xl font-bold mb-2 text-white">{selectedMovie.title}</h2>
+                    <div className="flex items-center gap-4 text-sm text-surface-100">
+                      <span className="px-3 py-1 bg-primary-500 rounded-full font-medium text-white">
                         {selectedMovie.rating}
                       </span>
                       <span>{selectedMovie.duration}</span>
@@ -391,30 +392,29 @@ const handleViewDetails = (movie) => {
 
 {/* Modal Content */}
             <div className="p-6 space-y-6">
-              {/* Synopsis */}
+{/* Synopsis */}
               <div>
-                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-3">Synopsis</h3>
-                <p className="text-surface-600 dark:text-surface-300 leading-relaxed">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-3">Synopsis</h3>
+                <p className="text-surface-700 dark:text-surface-200 leading-relaxed">
                   {selectedMovie.synopsis}
                 </p>
               </div>
-
               {/* Movie Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Cast & Crew */}
+{/* Cast & Crew */}
                 <div>
-                  <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Cast & Crew</h3>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-surface-100 mb-3">Cast & Crew</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <ApperIcon name="User" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
-                      <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Director:</span>
-                      <span className="text-sm text-surface-600 dark:text-surface-300">{selectedMovie.director}</span>
+                      <span className="text-sm font-medium text-surface-800 dark:text-surface-200">Director:</span>
+                      <span className="text-sm text-surface-700 dark:text-surface-200">{selectedMovie.director}</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <ApperIcon name="Users" className="w-4 h-4 text-surface-500 dark:text-surface-400 mt-0.5" />
                       <div>
-                        <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Cast:</span>
-                        <div className="text-sm text-surface-600 dark:text-surface-300">
+                        <span className="text-sm font-medium text-surface-800 dark:text-surface-200">Cast:</span>
+                        <div className="text-sm text-surface-700 dark:text-surface-200">
                           {selectedMovie.cast.join(', ')}
                         </div>
                       </div>
@@ -422,24 +422,24 @@ const handleViewDetails = (movie) => {
                   </div>
                 </div>
 
-                {/* Theater & Showtimes */}
+{/* Theater & Showtimes */}
                 <div>
-                  <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Theater Information</h3>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-surface-100 mb-3">Theater Information</h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <ApperIcon name="MapPin" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
-                      <span className="text-sm text-surface-600 dark:text-surface-300">{selectedMovie.theater}</span>
+                      <span className="text-sm text-surface-700 dark:text-surface-200">{selectedMovie.theater}</span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <ApperIcon name="Clock" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
-                        <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Showtimes:</span>
+                        <span className="text-sm font-medium text-surface-800 dark:text-surface-200">Showtimes:</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {selectedMovie.showtimes.map((time, idx) => (
                           <span 
                             key={idx} 
-                            className="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm rounded-lg font-medium"
+                            className="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200 text-sm rounded-lg font-medium"
                           >
                             {time}
                           </span>
@@ -450,30 +450,29 @@ const handleViewDetails = (movie) => {
                 </div>
               </div>
 
-              {/* Additional Information */}
+{/* Additional Information */}
               <div className="bg-surface-50 dark:bg-surface-800/50 rounded-xl p-4">
-                <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Additional Information</h3>
+                <h3 className="text-lg font-bold text-surface-900 dark:text-surface-100 mb-3">Additional Information</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-surface-700 dark:text-surface-300">Language:</span>
-                    <span className="text-surface-600 dark:text-surface-300 ml-2">English</span>
+                    <span className="font-medium text-surface-800 dark:text-surface-200">Language:</span>
+                    <span className="text-surface-600 dark:text-surface-200 ml-2">English</span>
                   </div>
                   <div>
-                    <span className="font-medium text-surface-700 dark:text-surface-300">Format:</span>
-                    <span className="text-surface-600 dark:text-surface-300 ml-2">IMAX, 4DX</span>
+                    <span className="font-medium text-surface-800 dark:text-surface-200">Format:</span>
+                    <span className="text-surface-600 dark:text-surface-200 ml-2">IMAX, 4DX</span>
                   </div>
                   <div>
-                    <span className="font-medium text-surface-700 dark:text-surface-300">Release Date:</span>
-                    <span className="text-surface-600 dark:text-surface-300 ml-2">May 5, 2023</span>
+                    <span className="font-medium text-surface-800 dark:text-surface-200">Release Date:</span>
+                    <span className="text-surface-600 dark:text-surface-200 ml-2">May 5, 2023</span>
                   </div>
                   <div>
-                    <span className="font-medium text-surface-700 dark:text-surface-300">Studio:</span>
-                    <span className="text-surface-600 dark:text-surface-300 ml-2">Marvel Studios</span>
+                    <span className="font-medium text-surface-800 dark:text-surface-200">Studio:</span>
+                    <span className="text-surface-600 dark:text-surface-200 ml-2">Marvel Studios</span>
                   </div>
                 </div>
               </div>
-
-              {/* Action Buttons */}
+{/* Action Buttons */}
               <div className="flex gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -490,7 +489,7 @@ const handleViewDetails = (movie) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCloseDetails}
-                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-all duration-300 focus-ring"
+                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-all duration-300 focus-ring"
                 >
                   Close
                 </motion.button>
