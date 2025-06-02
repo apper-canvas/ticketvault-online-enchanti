@@ -7,9 +7,10 @@ import NotFound from './pages/NotFound'
 import Account from './pages/Account'
 function App() {
   return (
-    <div className="App">
+<div className="App">
 <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/account" element={<Account />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
