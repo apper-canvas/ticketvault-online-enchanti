@@ -165,11 +165,12 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(99, 102, 241, 0.3)" }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/events')}
                   className="px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-soft transition-all duration-300 focus-ring"
                 >
                   Start Booking Now
