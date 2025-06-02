@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import ApperIcon from '../components/ApperIcon'
-
 const Movies = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('all')
-
+  const [showDetails, setShowDetails] = useState(false)
+  const [selectedMovie, setSelectedMovie] = useState(null)
   const genres = ['all', 'action', 'comedy', 'drama', 'horror', 'sci-fi', 'romance']
 
   const movies = [
@@ -97,10 +97,34 @@ const handleBookNow = (movie) => {
     navigate(`/booking/movie-${movie.id}`)
   }
 
-  const handleViewDetails = (movie) => {
-    toast.info(`Viewing details for ${movie.title}`)
+const handleViewDetails = (movie) => {
+    setSelectedMovie({
+      ...movie,
+      cast: ['Chris Pratt', 'Zoe Saldana', 'Dave Bautista', 'Karen Gillan', 'Pom Klementieff'],
+      director: 'James Gunn',
+      synopsis: 'In this epic conclusion to the Guardians trilogy, Peter Quill, still reeling from the loss of Gamora, must rally his team around him to defend the universe along with protecting one of their own. A mission that, if not completed successfully, could quite possibly lead to the end of the Guardians as we know them.',
+      userRating: 4.5,
+      totalReviews: 2847
+    })
+    setShowDetails(true)
   }
 
+  const handleCloseDetails = () => {
+    setShowDetails(false)
+    setSelectedMovie(null)
+}
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showDetails) {
+        handleCloseDetails()
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [showDetails])
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-primary-50/30 to-secondary-50/20 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Header */}
@@ -302,8 +326,179 @@ const handleBookNow = (movie) => {
               Try adjusting your search terms or filters
             </p>
           </motion.div>
-        )}
+)}
       </div>
+
+      {/* Movie Details Modal */}
+      {showDetails && selectedMovie && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/80 backdrop-blur-sm"
+          onClick={handleCloseDetails}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="glass-card max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="relative">
+              <div className="h-64 sm:h-80 overflow-hidden rounded-t-2xl">
+                <img
+                  src={selectedMovie.image}
+                  alt={selectedMovie.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/40 to-transparent" />
+              </div>
+              
+              {/* Close Button */}
+              <button
+                onClick={handleCloseDetails}
+                className="absolute top-4 right-4 w-10 h-10 bg-surface-900/80 hover:bg-surface-900 text-white rounded-full flex items-center justify-center transition-colors focus-ring"
+              >
+                <ApperIcon name="X" className="w-5 h-5" />
+              </button>
+
+              {/* Movie Title Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-2">{selectedMovie.title}</h2>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="px-3 py-1 bg-primary-500 rounded-full font-medium">
+                        {selectedMovie.rating}
+                      </span>
+                      <span>{selectedMovie.duration}</span>
+                      <span>{selectedMovie.genre.charAt(0).toUpperCase() + selectedMovie.genre.slice(1)}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-primary-400">{selectedMovie.price}</div>
+                    <div className="flex items-center gap-1 text-yellow-400">
+                      <ApperIcon name="Star" className="w-4 h-4 fill-current" />
+                      <span>{selectedMovie.userRating}/5</span>
+                      <span className="text-surface-300 text-xs">({selectedMovie.totalReviews} reviews)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Synopsis */}
+              <div>
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-3">Synopsis</h3>
+                <p className="text-surface-600 dark:text-surface-300 leading-relaxed">
+                  {selectedMovie.synopsis}
+                </p>
+              </div>
+
+              {/* Movie Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Cast & Crew */}
+                <div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Cast & Crew</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <ApperIcon name="User" className="w-4 h-4 text-surface-500" />
+                      <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Director:</span>
+                      <span className="text-sm text-surface-600 dark:text-surface-400">{selectedMovie.director}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <ApperIcon name="Users" className="w-4 h-4 text-surface-500 mt-0.5" />
+                      <div>
+                        <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Cast:</span>
+                        <div className="text-sm text-surface-600 dark:text-surface-400">
+                          {selectedMovie.cast.join(', ')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Theater & Showtimes */}
+                <div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Theater Information</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <ApperIcon name="MapPin" className="w-4 h-4 text-surface-500" />
+                      <span className="text-sm text-surface-600 dark:text-surface-300">{selectedMovie.theater}</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <ApperIcon name="Clock" className="w-4 h-4 text-surface-500" />
+                        <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Showtimes:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedMovie.showtimes.map((time, idx) => (
+                          <span 
+                            key={idx} 
+                            className="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm rounded-lg font-medium"
+                          >
+                            {time}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Information */}
+              <div className="bg-surface-50 dark:bg-surface-800/50 rounded-xl p-4">
+                <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Additional Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium text-surface-700 dark:text-surface-300">Language:</span>
+                    <span className="text-surface-600 dark:text-surface-400 ml-2">English</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-surface-700 dark:text-surface-300">Format:</span>
+                    <span className="text-surface-600 dark:text-surface-400 ml-2">IMAX, 4DX</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-surface-700 dark:text-surface-300">Release Date:</span>
+                    <span className="text-surface-600 dark:text-surface-400 ml-2">May 5, 2023</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-surface-700 dark:text-surface-300">Studio:</span>
+                    <span className="text-surface-600 dark:text-surface-400 ml-2">Marvel Studios</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleCloseDetails()
+                    handleBookNow(selectedMovie)
+                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl transition-all duration-300 focus-ring"
+                >
+                  Book Tickets Now
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCloseDetails}
+                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-all duration-300 focus-ring"
+                >
+                  Close
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
