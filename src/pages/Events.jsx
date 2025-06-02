@@ -87,15 +87,19 @@ const Events = () => {
     const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory
     const matchesLocation = !selectedLocation || event.location.toLowerCase().includes(selectedLocation.toLowerCase())
     
-    return matchesSearch && matchesCategory && matchesLocation
-  })
+return matchesSearch && matchesCategory && matchesLocation
+})
 
-  const handleBookEvent = (event) => {
-    toast.success(`Booking ${event.title} - Redirecting to seat selection...`, {
-      position: "top-right",
-      autoClose: 3000,
-    })
-  }
+const handleBookEvent = (event) => {
+  toast.success(`Booking ${event.title} - Redirecting to seat selection...`, {
+    position: "top-right",
+    autoClose: 3000,
+  })
+  // Navigate to home page where booking interface is available
+  setTimeout(() => {
+    navigate('/')
+  }, 500)
+}
 
   const formatDate = (dateString) => {
     const date = new Date(dateString)
