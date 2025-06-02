@@ -157,14 +157,14 @@ const MainFeature = () => {
     
     const seat = seats.find(s => s.id === seatId)
     if (seat && seat.isAvailable) {
+if (seat && seat.isAvailable) {
       if (seat.isSelected) {
         setSelectedSeats(prev => prev.filter(s => s !== seatId))
       } else {
-setSelectedSeats(prev => [...prev, seatId])
+        setSelectedSeats(prev => [...prev, seatId])
       }
     }
   }
-  const updatePaymentData = (field, value) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
       setPaymentData(prev => ({
@@ -382,14 +382,14 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
                 className="w-full px-4 py-3 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 font-medium rounded-xl transition-all duration-300 focus-ring"
               >
                 Clear Filters
-              </motion.button>
+</motion.button>
             </div>
-</div>
           </div>
         </div>
       </motion.div>
 
       {/* Event Booking Interface */}
+      <AnimatePresence mode="wait">
       <AnimatePresence mode="wait">
         {!isBookingMode ? (
           <motion.div
@@ -615,10 +615,10 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
                     <span>
                       ${selectedSeats.reduce((total, seatId) => {
                         const seat = seats.find(s => s.id === seatId)
-                        return total + (seat ? seat.price : 0)
+return total + (seat ? seat.price : 0)
                       }, 0).toFixed(2)}
                     </span>
-</div>
+                  </div>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -924,12 +924,12 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
 
                     <div className="mt-4 text-xs text-surface-500 dark:text-surface-400 text-center">
                       🔒 Your payment information is secure and encrypted
-                    </div>
+</div>
                   </div>
                 </div>
               </div>
             </div>
-</motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
