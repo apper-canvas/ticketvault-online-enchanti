@@ -7,8 +7,9 @@ import NotFound from './pages/NotFound'
 function App() {
   return (
     <div className="App">
-      <Routes>
+<Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/account" element={<Account />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer

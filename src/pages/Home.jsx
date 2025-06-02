@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import MainFeature from '../components/MainFeature'
 import ApperIcon from '../components/ApperIcon'
-
 const Home = () => {
+  const navigate = useNavigate()
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
@@ -71,8 +72,17 @@ const Home = () => {
               </motion.a>
             </nav>
 
-            {/* Dark Mode Toggle & Mobile Menu */}
+{/* Account & Dark Mode Toggle & Mobile Menu */}
             <div className="flex items-center space-x-3">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate('/account')}
+                className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors focus-ring"
+              >
+                <ApperIcon name="User" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
+              </motion.button>
+              
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
