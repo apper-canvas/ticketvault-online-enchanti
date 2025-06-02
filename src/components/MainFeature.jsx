@@ -286,7 +286,7 @@ const [seats, setSeats] = useState([])
     
     return matchesSearch && matchesCategory && matchesLocation
   })
-  const handleSeatClick = (seatId) => {
+const handleSeatClick = (seatId) => {
     setSeats(prevSeats => 
       prevSeats.map(seat => 
         seat.id === seatId && seat.isAvailable
@@ -294,7 +294,6 @@ const [seats, setSeats] = useState([])
           : seat
       )
     )
-)
     
     const seat = seats.find(s => s.id === seatId)
     if (seat && seat.isAvailable) {
@@ -397,9 +396,8 @@ return false
       toast.success(`Payment successful! Total: $${totalAmount.toFixed(2)} for ${selectedSeats.length} seat(s)`)
       
       // Reset all states
-      setSelectedSeats([])
+setSelectedSeats([])
       setSelectedEvent(null)
-setSelectedEvent(null)
       setIsBookingMode(false)
       setIsPaymentMode(false)
       setPaymentDataState({
@@ -421,8 +419,9 @@ setSelectedEvent(null)
     } catch (error) {
       toast.error('Payment failed. Please try again.')
     } finally {
-      setIsProcessingPayment(false)
+setIsProcessingPayment(false)
     }
+  }
 
   const handleBooking = () => {
     if (selectedSeats.length === 0) {
