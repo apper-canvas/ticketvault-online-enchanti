@@ -18,6 +18,7 @@ function App() {
         <Route path="/sports" element={<Sports />} />
         <Route path="/concerts" element={<Concerts />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/booking/:eventId" element={<MainFeature />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer

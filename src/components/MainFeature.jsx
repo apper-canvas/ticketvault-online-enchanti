@@ -384,14 +384,14 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
                 Clear Filters
               </motion.button>
             </div>
+</div>
           </div>
         </div>
-</motion.div>
+      </motion.div>
 
       {/* Event Booking Interface */}
       <AnimatePresence mode="wait">
         {!isBookingMode ? (
-          /* Events Grid */
           <motion.div
             key="events-grid"
             initial={{ opacity: 0 }}
@@ -929,11 +929,10 @@ const totalAmount = selectedSeats.reduce((total, seatId) => {
                 </div>
               </div>
             </div>
-          </motion.div>
+</motion.div>
         )}
       </AnimatePresence>
     </div>
   )
 }
-
 export default MainFeature

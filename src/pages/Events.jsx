@@ -91,13 +91,13 @@ return matchesSearch && matchesCategory && matchesLocation
 })
 
 const handleBookEvent = (event) => {
-  toast.success(`Booking ${event.title} - Redirecting to seat selection...`, {
+  toast.success(`Opening booking for ${event.title}...`, {
     position: "top-right",
-    autoClose: 3000,
+    autoClose: 2000,
   })
-  // Navigate to home page where booking interface is available
+  // Navigate to dedicated booking page with event ID
   setTimeout(() => {
-    navigate('/')
+    navigate(`/booking/${event.id}`)
   }, 500)
 }
 
