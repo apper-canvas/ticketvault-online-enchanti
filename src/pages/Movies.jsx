@@ -389,7 +389,7 @@ const handleViewDetails = (movie) => {
               </div>
             </div>
 
-            {/* Modal Content */}
+{/* Modal Content */}
             <div className="p-6 space-y-6">
               {/* Synopsis */}
               <div>
@@ -406,15 +406,15 @@ const handleViewDetails = (movie) => {
                   <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Cast & Crew</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <ApperIcon name="User" className="w-4 h-4 text-surface-500" />
+                      <ApperIcon name="User" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
                       <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Director:</span>
-                      <span className="text-sm text-surface-600 dark:text-surface-400">{selectedMovie.director}</span>
+                      <span className="text-sm text-surface-600 dark:text-surface-300">{selectedMovie.director}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <ApperIcon name="Users" className="w-4 h-4 text-surface-500 mt-0.5" />
+                      <ApperIcon name="Users" className="w-4 h-4 text-surface-500 dark:text-surface-400 mt-0.5" />
                       <div>
                         <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Cast:</span>
-                        <div className="text-sm text-surface-600 dark:text-surface-400">
+                        <div className="text-sm text-surface-600 dark:text-surface-300">
                           {selectedMovie.cast.join(', ')}
                         </div>
                       </div>
@@ -427,12 +427,12 @@ const handleViewDetails = (movie) => {
                   <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Theater Information</h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <ApperIcon name="MapPin" className="w-4 h-4 text-surface-500" />
+                      <ApperIcon name="MapPin" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
                       <span className="text-sm text-surface-600 dark:text-surface-300">{selectedMovie.theater}</span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <ApperIcon name="Clock" className="w-4 h-4 text-surface-500" />
+                        <ApperIcon name="Clock" className="w-4 h-4 text-surface-500 dark:text-surface-400" />
                         <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Showtimes:</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -456,19 +456,19 @@ const handleViewDetails = (movie) => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium text-surface-700 dark:text-surface-300">Language:</span>
-                    <span className="text-surface-600 dark:text-surface-400 ml-2">English</span>
+                    <span className="text-surface-600 dark:text-surface-300 ml-2">English</span>
                   </div>
                   <div>
                     <span className="font-medium text-surface-700 dark:text-surface-300">Format:</span>
-                    <span className="text-surface-600 dark:text-surface-400 ml-2">IMAX, 4DX</span>
+                    <span className="text-surface-600 dark:text-surface-300 ml-2">IMAX, 4DX</span>
                   </div>
                   <div>
                     <span className="font-medium text-surface-700 dark:text-surface-300">Release Date:</span>
-                    <span className="text-surface-600 dark:text-surface-400 ml-2">May 5, 2023</span>
+                    <span className="text-surface-600 dark:text-surface-300 ml-2">May 5, 2023</span>
                   </div>
                   <div>
                     <span className="font-medium text-surface-700 dark:text-surface-300">Studio:</span>
-                    <span className="text-surface-600 dark:text-surface-400 ml-2">Marvel Studios</span>
+                    <span className="text-surface-600 dark:text-surface-300 ml-2">Marvel Studios</span>
                   </div>
                 </div>
               </div>
