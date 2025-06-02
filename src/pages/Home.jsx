@@ -49,27 +49,27 @@ const Home = () => {
               >
                 Events
               </motion.button>
-              <motion.a
+<motion.button
                 whileHover={{ y: -2 }}
-                href="#" 
-                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors"
+                onClick={() => navigate('/movies')}
+                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors focus-ring"
               >
                 Movies
-              </motion.a>
-              <motion.a 
+              </motion.button>
+              <motion.button 
                 whileHover={{ y: -2 }}
-                href="#" 
-                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors"
+                onClick={() => navigate('/sports')}
+                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors focus-ring"
               >
                 Sports
-              </motion.a>
-              <motion.a 
+              </motion.button>
+              <motion.button 
                 whileHover={{ y: -2 }}
-                href="#" 
-                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors"
+                onClick={() => navigate('/concerts')}
+                className="text-surface-700 dark:text-surface-300 hover:text-primary-600 font-medium transition-colors focus-ring"
               >
                 Concerts
-              </motion.a>
+              </motion.button>
             </nav>
 
 {/* Account & Dark Mode Toggle & Mobile Menu */}
