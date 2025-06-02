@@ -9,6 +9,8 @@ const Account = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
   const [isLoading, setIsLoading] = useState(false)
+  const [showBookingDetails, setShowBookingDetails] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState(null)
   const navigate = useNavigate()
 
   // User profile state
@@ -93,6 +95,16 @@ const Account = () => {
     if (setting === 'darkMode') {
       setIsDarkMode(value)
     }
+}
+
+  const handleBookingDetails = (booking) => {
+    setSelectedBooking(booking)
+    setShowBookingDetails(true)
+  }
+
+  const handleCloseBookingDetails = () => {
+    setShowBookingDetails(false)
+    setSelectedBooking(null)
   }
 
   const handleAvatarUpload = (e) => {
@@ -368,10 +380,14 @@ const Account = () => {
                   </div>
                 </div>
                 
-                {bookings.length > 0 ? (
+{bookings.length > 0 ? (
                   <div className="space-y-4">
                     {bookings.map((booking) => (
-                      <BookingCard key={booking.id} booking={booking} />
+                      <BookingCard 
+                        key={booking.id} 
+                        booking={booking} 
+                        onViewDetails={() => handleBookingDetails(booking)}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -391,9 +407,224 @@ const Account = () => {
                 )}
               </div>
             )}
-          </motion.div>
+</motion.div>
         </motion.div>
       </div>
+
+      {/* Booking Details Modal */}
+      {showBookingDetails && selectedBooking && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={handleCloseBookingDetails}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700 p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-surface-900 dark:text-white">
+                  Booking Details
+                </h2>
+                <button
+                  onClick={handleCloseBookingDetails}
+                  className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-8">
+              {/* Event Information */}
+              <div className="flex flex-col lg:flex-row gap-6">
+                <div className="lg:w-80 lg:h-48 w-full h-64 rounded-xl overflow-hidden bg-surface-200 dark:bg-surface-700">
+                  <img 
+                    src={selectedBooking.image} 
+                    alt={selectedBooking.eventName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <h3 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">
+                      {selectedBooking.eventName}
+                    </h3>
+                    <div className="flex items-center space-x-2 text-surface-600 dark:text-surface-400 mb-4">
+                      <ApperIcon name="MapPin" className="w-5 h-5" />
+                      <span className="text-lg">{selectedBooking.venue}</span>
+                    </div>
+                    <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium capitalize ${
+                      selectedBooking.status === 'confirmed' 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                        : selectedBooking.status === 'cancelled'
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                        : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                    }`}>
+                      {selectedBooking.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Booking Information Grid */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Event Details */}
+                <div className="space-y-6">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-white border-b border-surface-200 dark:border-surface-700 pb-2">
+                    Event Details
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="Calendar" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Date</p>
+                        <p className="font-medium text-surface-900 dark:text-white">
+                          {new Date(selectedBooking.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="Clock" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Time</p>
+                        <p className="font-medium text-surface-900 dark:text-white">
+                          {selectedBooking.time}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="Armchair" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Seats</p>
+                        <p className="font-medium text-surface-900 dark:text-white">
+                          {selectedBooking.seats.join(', ')}
+                        </p>
+                        <p className="text-xs text-surface-500 dark:text-surface-400">
+                          {selectedBooking.seats.length} seat{selectedBooking.seats.length > 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Booking Information */}
+                <div className="space-y-6">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-white border-b border-surface-200 dark:border-surface-700 pb-2">
+                    Booking Information
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="Hash" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Booking ID</p>
+                        <p className="font-medium text-surface-900 dark:text-white font-mono">
+                          {selectedBooking.id}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="Calendar" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Booking Date</p>
+                        <p className="font-medium text-surface-900 dark:text-white">
+                          {new Date(selectedBooking.bookingDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <ApperIcon name="DollarSign" className="w-5 h-5 text-primary-600" />
+                      <div>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">Total Amount</p>
+                        <p className="font-medium text-surface-900 dark:text-white text-lg">
+                          ${selectedBooking.totalAmount}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing Breakdown */}
+              <div className="bg-surface-50 dark:bg-surface-900/50 rounded-xl p-6">
+                <h4 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                  Pricing Breakdown
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-surface-600 dark:text-surface-400">
+                      Ticket Price ({selectedBooking.seats.length} × ${Math.floor(selectedBooking.totalAmount / selectedBooking.seats.length * 0.85)})
+                    </span>
+                    <span className="font-medium text-surface-900 dark:text-white">
+                      ${Math.floor(selectedBooking.totalAmount * 0.85)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-surface-600 dark:text-surface-400">Service Fee</span>
+                    <span className="font-medium text-surface-900 dark:text-white">
+                      ${Math.floor(selectedBooking.totalAmount * 0.10)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-surface-600 dark:text-surface-400">Processing Fee</span>
+                    <span className="font-medium text-surface-900 dark:text-white">
+                      ${selectedBooking.totalAmount - Math.floor(selectedBooking.totalAmount * 0.85) - Math.floor(selectedBooking.totalAmount * 0.10)}
+                    </span>
+                  </div>
+                  <div className="border-t border-surface-200 dark:border-surface-700 pt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-semibold text-surface-900 dark:text-white">Total</span>
+                      <span className="text-lg font-bold text-primary-600">${selectedBooking.totalAmount}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                {selectedBooking.status === 'confirmed' && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 flex items-center justify-center space-x-2"
+                  >
+                    <ApperIcon name="Download" className="w-5 h-5" />
+                    <span>Download Ticket</span>
+                  </motion.button>
+                )}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCloseBookingDetails}
+                  className="flex-1 px-6 py-3 bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-900 dark:text-white font-semibold rounded-xl transition-all duration-300"
+                >
+                  Close
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

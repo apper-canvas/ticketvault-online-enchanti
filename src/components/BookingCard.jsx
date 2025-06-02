@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import ApperIcon from './ApperIcon'
 
-const BookingCard = ({ booking }) => {
+const BookingCard = ({ booking, onViewDetails }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed':
@@ -108,10 +108,11 @@ const BookingCard = ({ booking }) => {
               <span>Booked on {formatDate(booking.bookingDate)}</span>
             </div>
             
-            <div className="flex space-x-2">
+<div className="flex space-x-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => onViewDetails(booking)}
                 className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 View Details
