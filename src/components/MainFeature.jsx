@@ -160,11 +160,10 @@ const MainFeature = () => {
       if (seat.isSelected) {
         setSelectedSeats(prev => prev.filter(s => s !== seatId))
       } else {
-        setSelectedSeats(prev => [...prev, seatId])
+setSelectedSeats(prev => [...prev, seatId])
       }
-}
+    }
   }
-
   const updatePaymentData = (field, value) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
@@ -292,9 +291,8 @@ const MainFeature = () => {
       return
     }
     
-    const totalAmount = selectedSeats.reduce((total, seatId) => {
+const totalAmount = selectedSeats.reduce((total, seatId) => {
       const seat = seats.find(s => s.id === seatId)
-const seat = seats.find(s => s.id === seatId)
       return total + (seat ? seat.price : 0)
     }, 0)
     
@@ -388,9 +386,9 @@ const seat = seats.find(s => s.id === seatId)
             </div>
           </div>
         </div>
-      </motion.div>
+</motion.div>
 
-{/* Event Booking Interface */}
+      {/* Event Booking Interface */}
       <AnimatePresence mode="wait">
         {!isBookingMode ? (
           /* Events Grid */
@@ -620,9 +618,9 @@ const seat = seats.find(s => s.id === seatId)
                         return total + (seat ? seat.price : 0)
                       }, 0).toFixed(2)}
                     </span>
-                  </div>
+</div>
                 </div>
-<motion.button
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleBooking}
