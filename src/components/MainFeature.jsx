@@ -351,8 +351,8 @@ const updatePaymentData = (field, value) => {
       return false
     }
     if (!paymentDataUpdated.billingAddress.street.trim()) {
-      toast.error('Please enter street address')
-return false
+toast.error('Please enter street address')
+      return false
     }
     if (!paymentDataUpdated.billingAddress.city.trim()) {
       toast.error('Please enter city')
@@ -369,7 +369,6 @@ return false
     
     return true
   }
-
 const handleBackToEvents = () => {
     if (selectedEvent?.isMovie) {
       navigate('/movies')
@@ -379,6 +378,7 @@ const handleBackToEvents = () => {
       navigate('/events')
     }
   }
+
   const handlePayment = async () => {
     if (!validatePaymentData()) {
       return
@@ -397,8 +397,8 @@ const handleBackToEvents = () => {
       
       toast.success(`Payment successful! Total: $${totalAmount.toFixed(2)} for ${selectedSeats.length} seat(s)`)
       
-      // Reset all states
-setSelectedSeats([])
+// Reset all states
+      setSelectedSeats([])
       setSelectedEvent(null)
       setIsBookingMode(false)
       setIsPaymentMode(false)
@@ -420,8 +420,8 @@ setSelectedSeats([])
       
     } catch (error) {
       toast.error('Payment failed. Please try again.')
-    } finally {
-setIsProcessingPayment(false)
+} finally {
+      setIsProcessingPayment(false)
     }
   }
 
@@ -436,10 +436,9 @@ setIsProcessingPayment(false)
 
   const handleInitialBooking = () => {
     if (selectedSeats.length === 0) {
-      toast.error('Please select at least one seat')
+toast.error('Please select at least one seat')
       return
-}
-    
+    }
     const totalAmount = selectedSeats.reduce((total, seatId) => {
       const seat = seats.find(s => s.id === seatId)
       return total + (seat ? seat.price : 0)
@@ -529,14 +528,14 @@ setIsProcessingPayment(false)
                 }}
                 className="w-full px-4 py-3 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 font-medium rounded-xl transition-all duration-300 focus-ring"
               >
-                Clear Filters
-</motion.button>
+Clear Filters
+              </motion.button>
             </div>
           </div>
         </div>
       </motion.div>
 
-{/* Event Booking Interface */}
+      {/* Event Booking Interface */}
       <AnimatePresence mode="wait">
         {!isBookingMode ? (
           <motion.div
@@ -546,8 +545,8 @@ setIsProcessingPayment(false)
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-          >
-{filteredEvents.map((event, index) => (
+>
+            {filteredEvents.map((event, index) => (
               <motion.div
                 key={event.id}
                 initial={{ opacity: 0, y: 50 }}
@@ -658,19 +657,22 @@ setIsProcessingPayment(false)
                     <ApperIcon name="Calendar" className="w-4 h-4 mr-1" />
                     <span className="text-sm">{selectedEvent?.date} at {selectedEvent?.time}</span>
                   </div>
-                </div>
 </div>
-<motion.button
+              </div>
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleBackToEvents}
-                className="mt-4 sm:mt-0 px-4 py-2 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 rounded-xl transition-colors focus-ring"
+                className="px-6 py-3 bg-surface-500 hover:bg-surface-600 text-white rounded-lg transition-colors focus-ring"
               >
-                {selectedEvent?.isMovie ? 'Back to Movies' : eventId && eventId.startsWith('sports-') ? 'Back to Sports' : 'Back to Events'}
+                {selectedEvent?.eventId?.startsWith('movie-') ? 'Back to Movies' : 
+                 selectedEvent?.eventId?.startsWith('sports-') ? 'Back to Sports' : 'Back to Events'}
               </motion.button>
             </div>
+
             {/* Seat Legend */}
-            <div className="flex flex-wrap gap-6 mb-8 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-xl">
+            <div className="flex flex-wrap justify-center gap-6 mb-8 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-xl">
+            </div>
               <div className="flex items-center">
                 <div className="seat-available mr-2"></div>
                 <span className="text-sm text-surface-600 dark:text-surface-400">Available</span>
@@ -769,9 +771,9 @@ setIsProcessingPayment(false)
                     <span>Total Amount:</span>
                     <span>
                       ${selectedSeats.reduce((total, seatId) => {
+${selectedSeats.reduce((total, seatId) => {
                         const seat = seats.find(s => s.id === seatId)
-return total + (seat ? seat.price : 0)
-                      }, 0).toFixed(2)}
+                        return total + (seat ? seat.price : 0)
                     </span>
                   </div>
                 </div>
@@ -830,8 +832,8 @@ return total + (seat ? seat.price : 0)
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                       { id: 'card', label: 'Credit Card', icon: '💳' },
-                      { id: 'paypal', label: 'PayPal', icon: '🅿️' },
-{ id: 'apple', label: 'Apple Pay', icon: '🍎' }
+{ id: 'paypal', label: 'PayPal', icon: '🅿️' },
+                      { id: 'apple', label: 'Apple Pay', icon: '🍎' }
                     ].map(method => (
                       <motion.button
                         key={method.id}
@@ -850,7 +852,6 @@ return total + (seat ? seat.price : 0)
                     ))}
                   </div>
                 </div>
-
 {/* Credit Card Form */}
                 {paymentDataUpdated.paymentMethod === 'card' && (
                   <div className="space-y-4">
@@ -872,8 +873,8 @@ return total + (seat ? seat.price : 0)
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Card Number *
-                      </label>
-<input
+</label>
+                      <input
                         type="text"
                         value={paymentDataUpdated.cardNumber}
                         onChange={(e) => updatePaymentData('cardNumber', e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '))}
@@ -922,8 +923,8 @@ return total + (seat ? seat.price : 0)
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Email Address *
-                      </label>
-<input
+</label>
+                      <input
                         type="email"
                         value={paymentDataUpdated.email}
                         onChange={(e) => updatePaymentData('email', e.target.value)}
@@ -953,8 +954,8 @@ return total + (seat ? seat.price : 0)
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       Street Address *
-                    </label>
-<input
+</label>
+                    <input
                       type="text"
                       value={paymentDataUpdated.billingAddress.street}
                       onChange={(e) => updatePaymentData('billingAddress.street', e.target.value)}
@@ -1076,7 +1077,6 @@ return total + (seat ? seat.price : 0)
                         'Complete Payment'
                       )}
                     </motion.button>
-
 <div className="mt-4 text-xs text-surface-500 dark:text-surface-400 text-center">
                       🔒 Your payment information is secure and encrypted
                     </div>
@@ -1090,4 +1090,5 @@ return total + (seat ? seat.price : 0)
     </div>
   )
 }
+
 export default MainFeature
