@@ -69,11 +69,27 @@ content: [
         'xl': '0.75rem',
         '2xl': '1rem'
       },
-      animation: {
+animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-subtle': 'bounce 2s infinite',
         'seat-select': 'seatSelect 0.3s ease-out',
-        'shimmer': 'shimmer 2s linear infinite'
+        'shimmer': 'shimmer 2s linear infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'float-delayed': 'float 6s ease-in-out infinite 2s',
+        'breathe': 'breathe 4s ease-in-out infinite',
+        'magnetic': 'magnetic 0.2s ease-out',
+        'glow-pulse': 'glowPulse 2s ease-in-out infinite alternate',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'slide-down': 'slideDown 0.6s ease-out',
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'scale-in': 'scaleIn 0.4s ease-out',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+        'typewriter': 'typewriter 4s steps(40) infinite',
+        'gradient-shift': 'gradientShift 3s ease-in-out infinite',
+        'particle-float': 'particleFloat 8s ease-in-out infinite',
+        'spin-slow': 'spin 3s linear infinite',
+        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite'
       },
       keyframes: {
         seatSelect: {
@@ -84,7 +100,64 @@ content: [
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' }
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' }
+        },
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.02)' }
+        },
+        magnetic: {
+          '0%': { transform: 'scale(1) translateX(0) translateY(0)' },
+          '100%': { transform: 'scale(1.05) translateX(var(--magnetic-x, 0)) translateY(var(--magnetic-y, 0))' }
+        },
+        glowPulse: {
+          '0%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' },
+          '100%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.6), 0 0 60px rgba(99, 102, 241, 0.3)' }
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.9)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' }
+        },
+        typewriter: {
+          '0%': { width: '0' },
+          '50%': { width: '100%' },
+          '100%': { width: '0' }
+        },
+        gradientShift: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' }
+        },
+        particleFloat: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+          '33%': { transform: 'translateY(-10px) rotate(120deg)' },
+          '66%': { transform: 'translateY(5px) rotate(240deg)' }
+        },
+        bounceGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' }
         }
+      },
+      backgroundSize: {
+        '300%': '300%'
       }
     }
   },

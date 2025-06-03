@@ -23,23 +23,53 @@
 
 @layer components {
   .glass-card {
-    @apply backdrop-blur-lg bg-white/30 border border-white/20 shadow-soft rounded-2xl;
+    @apply backdrop-blur-lg bg-white/30 border border-white/20 shadow-soft rounded-2xl transition-all duration-300 hover:shadow-card;
+  }
+  
+  .glass-card-interactive {
+    @apply glass-card hover:bg-white/40 dark:hover:bg-surface-800/40 hover:scale-[1.02] animate-breathe;
   }
   
   .neu-button {
     @apply bg-gradient-to-br from-white to-surface-100 shadow-neu-light border border-surface-200/50 hover:shadow-neu-dark transition-all duration-300 rounded-xl;
   }
   
+  .magnetic-button {
+    @apply transition-all duration-200 ease-out cursor-pointer;
+    will-change: transform;
+  }
+  
+  .magnetic-button:hover {
+    @apply animate-magnetic;
+  }
+  
   .gradient-text {
     @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
   }
   
+  .gradient-text-animated {
+    @apply gradient-text animate-gradient-shift;
+    background-size: 300% 300%;
+  }
+  
+  .floating-card {
+    @apply animate-float hover:animate-none hover:transform hover:-translate-y-2 transition-all duration-300;
+  }
+  
+  .breathing-card {
+    @apply animate-breathe hover:animate-none hover:scale-105 transition-all duration-300;
+  }
+  
+  .interactive-button {
+    @apply magnetic-button transform transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95;
+  }
+  
   .seat-base {
-    @apply w-8 h-8 rounded-lg border-2 transition-all duration-200 cursor-pointer flex items-center justify-center text-xs font-medium;
+    @apply w-8 h-8 rounded-lg border-2 transition-all duration-200 cursor-pointer flex items-center justify-center text-xs font-medium hover:animate-bounce-gentle;
   }
   
   .seat-available {
-    @apply seat-base bg-surface-100 border-surface-300 hover:bg-primary-50 hover:border-primary-300 hover:shadow-seat;
+    @apply seat-base bg-surface-100 border-surface-300 hover:bg-primary-50 hover:border-primary-300 hover:shadow-seat hover:scale-110;
   }
   
   .seat-selected {
@@ -51,7 +81,7 @@
   }
   
   .premium-seat-available {
-    @apply seat-base bg-accent/10 border-accent/30 hover:bg-accent/20 hover:border-accent/50;
+    @apply seat-base bg-accent/10 border-accent/30 hover:bg-accent/20 hover:border-accent/50 hover:animate-glow-pulse;
   }
   
   .premium-seat-selected {
@@ -66,6 +96,44 @@
     content: '';
     @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer;
     background-size: 200% 100%;
+  }
+  
+  .particle-bg {
+    @apply relative overflow-hidden;
+  }
+  
+  .particle-bg::before {
+    content: '';
+    @apply absolute inset-0 opacity-20;
+    background-image: radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+    animation: particleFloat 8s ease-in-out infinite;
+  }
+  
+  .neon-glow {
+    @apply animate-glow-pulse;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  
+  .page-transition {
+    @apply animate-slide-up;
+  }
+  
+  .card-hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+  
+  .interactive-scale {
+    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .smooth-appear {
+    @apply animate-fade-in;
+  }
+  
+  .stagger-appear {
+    @apply animate-scale-in;
   }
 }
 
@@ -82,6 +150,21 @@
   .text-shadow {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  
+  .text-glow {
+    text-shadow: 0 0 20px currentColor;
+  }
+  
+  .bg-gradient-animated {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -94,7 +177,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-surface-300 rounded-full hover:bg-surface-400;
+  @apply bg-surface-300 rounded-full hover:bg-surface-400 transition-colors;
 }
 
 /* Dark mode adjustments */
@@ -106,14 +189,79 @@
   @apply bg-surface-800/30 border-surface-700/20;
 }
 
+.dark .glass-card-interactive {
+  @apply hover:bg-surface-700/40;
+}
+
 .dark .neu-button {
   @apply bg-gradient-to-br from-surface-800 to-surface-900 shadow-neu-dark border-surface-700/50;
+}
+
+/* Interactive particle system */
+.particle-system {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: particleFloat 6s ease-in-out infinite;
+}
+
+.particle:nth-child(2n) {
+  animation-delay: -2s;
+  animation-duration: 8s;
+}
+
+.particle:nth-child(3n) {
+  animation-delay: -4s;
+  animation-duration: 10s;
+}
+
+/* Magnetic button effect */
+.magnetic-field {
+  position: relative;
+  cursor: none;
+}
+
+.magnetic-field::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.magnetic-field:hover::after {
+  opacity: 1;
+  width: 40px;
+  height: 40px;
 }
 
 /* Responsive design helpers */
 @media (max-width: 640px) {
   .seat-base {
     @apply w-6 h-6 text-xs;
+  }
+  
+  .floating-card {
+    @apply animate-none;
+  }
+  
+  .breathing-card {
+    @apply animate-none;
   }
 }
 
@@ -124,7 +272,78 @@
   animation: shimmer 1.5s infinite;
 }
 
+.loading-dots::after {
+  content: '';
+  animation: typewriter 1.5s infinite;
+}
+
 /* Focus styles for accessibility */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900 transition-all duration-200;
+}
+
+.focus-glow {
+  @apply focus:outline-none focus:ring-4 focus:ring-primary-500/50 focus:shadow-lg transition-all duration-200;
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .glass-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-card {
+    background: white !important;
+    border: 2px solid black !important;
+  }
+  
+  .gradient-text {
+    background: none !important;
+    color: black !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-breathe,
+  .animate-bounce-gentle,
+  .animate-glow-pulse,
+  .animate-particle-float,
+  .animate-gradient-shift {
+    animation: none !important;
+  }
+  
+  .floating-card,
+  .breathing-card {
+    animation: none !important;
+  }
+  
+  .magnetic-button:hover {
+    animation: none !important;
+    transform: scale(1.05) !important;
+  }
 }
