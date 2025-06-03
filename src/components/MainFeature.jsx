@@ -657,22 +657,14 @@ setIsProcessingPayment(false)
                     <span className="text-sm">{selectedEvent?.date} at {selectedEvent?.time}</span>
                   </div>
                 </div>
-              </div>
-<motion.button
+</div>
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  if (eventId) {
-                    navigate('/events')
-                  } else {
-                    setIsBookingMode(false)
-                    setSelectedEvent(null)
-                    setSelectedSeats([])
-                  }
-                }}
+                onClick={handleBackToEvents}
                 className="mt-4 sm:mt-0 px-4 py-2 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 rounded-xl transition-colors focus-ring"
               >
-                Back to Events
+                {selectedEvent?.isMovie ? 'Back to Movies' : 'Back to Events'}
               </motion.button>
             </div>
 
