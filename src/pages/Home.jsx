@@ -175,9 +175,10 @@ className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                 >
                   Start Booking Now
                 </motion.button>
-                <motion.button
+<motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/events')}
                   className="px-8 py-4 bg-white/80 dark:bg-surface-800/80 backdrop-blur-sm text-surface-900 dark:text-white font-semibold rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-white dark:hover:bg-surface-800 transition-all duration-300 focus-ring"
                 >
                   Explore Events
