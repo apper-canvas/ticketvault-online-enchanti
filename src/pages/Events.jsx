@@ -6,10 +6,11 @@ import ApperIcon from '../components/ApperIcon'
 
 const Events = () => {
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
+const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [selectedLocation, setSelectedLocation] = useState('')
-
+  const [showEventDetails, setShowEventDetails] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState(null)
   const categories = ['All', 'Movies', 'Sports', 'Concerts', 'Theater']
   
   const sampleEvents = [
@@ -101,6 +102,10 @@ const handleBookEvent = (event) => {
   }, 500)
 }
 
+const handleViewDetails = (event) => {
+  setSelectedEvent(event)
+  setShowEventDetails(true)
+}
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', { 
@@ -296,28 +301,194 @@ const handleBookEvent = (event) => {
                         <span className="text-sm">{formatDate(event.date)} • {event.time}</span>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between">
+<div className="flex items-center justify-between mb-4">
                       <div>
                         <span className="text-2xl font-bold text-primary-600">${event.price}</span>
                         <span className="text-surface-500 dark:text-surface-400 text-sm ml-1">per ticket</span>
                       </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleViewDetails(event)}
+                        className="flex-1 px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 font-medium rounded-lg transition-all duration-300 focus-ring"
+                      >
+                        Details
+                      </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleBookEvent(event)}
-                        className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg shadow-soft transition-all duration-300 focus-ring"
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg shadow-soft transition-all duration-300 focus-ring"
                       >
                         Book Now
                       </motion.button>
-                    </div>
+</div>
                   </div>
                 </motion.div>
               ))}
             </div>
           )}
         </div>
-      </motion.section>
+</motion.section>
+
+      {/* Event Details Modal */}
+      {showEventDetails && selectedEvent && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowEventDetails(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="relative">
+              <img
+                src={selectedEvent.image}
+                alt={selectedEvent.title}
+                className="w-full h-64 object-cover rounded-t-2xl"
+              />
+              <div className="absolute top-4 right-4 bg-white/90 dark:bg-surface-800/90 backdrop-blur-sm rounded-full p-2">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowEventDetails(false)}
+                  className="text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200"
+                >
+                  <ApperIcon name="X" className="w-5 h-5" />
+                </motion.button>
+              </div>
+              <div className="absolute top-4 left-4 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                {selectedEvent.category}
+              </div>
+              <div className="absolute bottom-4 right-4 bg-white/90 dark:bg-surface-800/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                <div className="flex items-center space-x-1">
+                  <ApperIcon name="Star" className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="text-sm font-medium text-surface-700 dark:text-surface-300">{selectedEvent.rating}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="mb-6">
+                <h2 className="text-3xl font-bold text-surface-900 dark:text-white mb-2">
+                  {selectedEvent.title}
+                </h2>
+                <p className="text-surface-600 dark:text-surface-400 leading-relaxed">
+                  Experience the best in {selectedEvent.category.toLowerCase()} entertainment. This highly-rated event promises an unforgettable experience with world-class production values and exceptional performances.
+                </p>
+              </div>
+
+              {/* Event Details Grid */}
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ApperIcon name="MapPin" className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-surface-900 dark:text-white">Venue</h4>
+                      <p className="text-surface-600 dark:text-surface-400">{selectedEvent.location}</p>
+                      <p className="text-sm text-surface-500 dark:text-surface-500">Premium seating available</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ApperIcon name="Calendar" className="w-5 h-5 text-secondary-600 dark:text-secondary-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-surface-900 dark:text-white">Date & Time</h4>
+                      <p className="text-surface-600 dark:text-surface-400">{formatDate(selectedEvent.date)}</p>
+                      <p className="text-sm text-surface-500 dark:text-surface-500">{selectedEvent.time}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-success-100 dark:bg-success-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ApperIcon name="DollarSign" className="w-5 h-5 text-success-600 dark:text-success-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-surface-900 dark:text-white">Pricing</h4>
+                      <p className="text-2xl font-bold text-primary-600">${selectedEvent.price}</p>
+                      <p className="text-sm text-surface-500 dark:text-surface-500">Starting price per ticket</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-warning-100 dark:bg-warning-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ApperIcon name="Users" className="w-5 h-5 text-warning-600 dark:text-warning-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-surface-900 dark:text-white">Availability</h4>
+                      <p className="text-surface-600 dark:text-surface-400">Limited seats remaining</p>
+                      <p className="text-sm text-surface-500 dark:text-surface-500">Book now to secure your spot</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-surface-900 dark:text-white mb-3">Event Features</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Wifi" className="w-4 h-4 text-primary-600" />
+                    <span className="text-sm text-surface-600 dark:text-surface-400">Free WiFi</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Car" className="w-4 h-4 text-primary-600" />
+                    <span className="text-sm text-surface-600 dark:text-surface-400">Parking Available</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Coffee" className="w-4 h-4 text-primary-600" />
+                    <span className="text-sm text-surface-600 dark:text-surface-400">Refreshments</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Shield" className="w-4 h-4 text-primary-600" />
+                    <span className="text-sm text-surface-600 dark:text-surface-400">Secure Venue</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowEventDetails(false)}
+                  className="flex-1 px-6 py-3 bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 font-medium rounded-xl transition-all duration-300 focus-ring"
+                >
+                  Close
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setShowEventDetails(false)
+                    handleBookEvent(selectedEvent)
+                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-soft transition-all duration-300 focus-ring"
+                >
+                  Book Now
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
