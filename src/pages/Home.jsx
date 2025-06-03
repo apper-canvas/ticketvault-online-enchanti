@@ -13,8 +13,14 @@ const Home = () => {
     } else {
       document.documentElement.classList.remove('dark')
     }
-  }, [isDarkMode])
+}, [isDarkMode])
 
+  // Handle instant booking functionality
+  const handleInstantBooking = () => {
+    // Select a popular featured event for instant booking
+    const featuredEventId = 1 // Rock Legends Live - popular concert
+    navigate(`/booking/${featuredEventId}`)
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-primary-50/30 to-secondary-50/20 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Header */}
@@ -160,12 +166,12 @@ const Home = () => {
                 ))}
               </motion.div>
 
-              {/* CTA Buttons */}
+{/* CTA Buttons */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
-className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(99, 102, 241, 0.3)" }}
@@ -175,7 +181,17 @@ className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                 >
                   Start Booking Now
                 </motion.button>
-<motion.button
+                
+                <motion.button
+                  whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(16, 185, 129, 0.3)" }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleInstantBooking}
+                  className="px-8 py-4 bg-gradient-to-r from-accent to-primary-600 hover:from-accent/90 hover:to-primary-700 text-white font-semibold rounded-xl shadow-soft transition-all duration-300 focus-ring"
+                >
+                  ⚡ Instant Booking
+                </motion.button>
+
+                <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/events')}
