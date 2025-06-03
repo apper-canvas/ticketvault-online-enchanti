@@ -670,9 +670,8 @@ Clear Filters
               </motion.button>
             </div>
 
-            {/* Seat Legend */}
+{/* Seat Legend */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-xl">
-            </div>
               <div className="flex items-center">
                 <div className="seat-available mr-2"></div>
                 <span className="text-sm text-surface-600 dark:text-surface-400">Available</span>
@@ -690,7 +689,6 @@ Clear Filters
                 <span className="text-sm text-surface-600 dark:text-surface-400">Premium</span>
               </div>
             </div>
-
             {/* Stage */}
             <div className="text-center mb-8">
               <div className="inline-block px-8 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-2xl shadow-soft">
@@ -767,13 +765,13 @@ Clear Filters
                     <span>Number of Tickets:</span>
                     <span className="font-medium">{selectedSeats.length}</span>
                   </div>
-                  <div className="flex justify-between text-lg font-semibold text-surface-900 dark:text-white border-t border-surface-200 dark:border-surface-700 pt-2">
+<div className="flex justify-between text-lg font-semibold text-surface-900 dark:text-white border-t border-surface-200 dark:border-surface-700 pt-2">
                     <span>Total Amount:</span>
                     <span>
                       ${selectedSeats.reduce((total, seatId) => {
-${selectedSeats.reduce((total, seatId) => {
                         const seat = seats.find(s => s.id === seatId)
                         return total + (seat ? seat.price : 0)
+                      }, 0).toFixed(2)}
                     </span>
                   </div>
                 </div>
