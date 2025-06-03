@@ -6,6 +6,8 @@ import ApperIcon from '../components/ApperIcon'
 const Home = () => {
   const navigate = useNavigate()
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false)
 
   useEffect(() => {
     if (isDarkMode) {
@@ -227,8 +229,199 @@ const Home = () => {
         transition={{ duration: 1, delay: 0.8 }}
         className="py-12 sm:py-20"
       >
-        <MainFeature />
+<MainFeature />
       </motion.section>
+
+      {/* Footer with Terms & Privacy */}
+      <motion.footer
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 1.0 }}
+        className="bg-gradient-to-r from-surface-800 to-surface-900 dark:from-surface-900 dark:to-black"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Company Info */}
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
+                  <ApperIcon name="Ticket" className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white">TicketVault</h3>
+              </div>
+              <p className="text-surface-300 text-sm leading-relaxed">
+                Your premier destination for event booking. Secure, fast, and reliable ticket purchasing for all your favorite events.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+              <div className="space-y-2">
+                {[
+                  { name: 'Events', path: '/events' },
+                  { name: 'Movies', path: '/movies' },
+                  { name: 'Sports', path: '/sports' },
+                  { name: 'Concerts', path: '/concerts' }
+                ].map((link) => (
+                  <button
+                    key={link.name}
+                    onClick={() => navigate(link.path)}
+                    className="block text-surface-300 hover:text-white transition-colors text-sm"
+                  >
+                    {link.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowTerms(true)}
+                  className="block text-surface-300 hover:text-white transition-colors text-sm focus-ring"
+                >
+                  Terms & Conditions
+                </button>
+                <button
+                  onClick={() => setShowPrivacy(true)}
+                  className="block text-surface-300 hover:text-white transition-colors text-sm focus-ring"
+                >
+                  Privacy Policy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="mt-8 pt-8 border-t border-surface-700">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <p className="text-surface-400 text-sm">
+                © 2024 TicketVault. All rights reserved.
+              </p>
+              <div className="flex space-x-6">
+                <button
+                  onClick={() => setShowTerms(true)}
+                  className="text-surface-400 hover:text-white text-sm transition-colors focus-ring"
+                >
+                  Terms
+                </button>
+                <button
+                  onClick={() => setShowPrivacy(true)}
+                  className="text-surface-400 hover:text-white text-sm transition-colors focus-ring"
+                >
+                  Privacy
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.footer>
+
+      {/* Terms & Conditions Modal */}
+      {showTerms && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowTerms(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
+              <h2 className="text-2xl font-bold text-surface-900 dark:text-white">Terms & Conditions</h2>
+              <button
+                onClick={() => setShowTerms(false)}
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-colors focus-ring"
+              >
+                <ApperIcon name="X" className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="prose dark:prose-invert max-w-none">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using TicketVault, you agree to these terms and conditions. If you do not agree, please do not use our service.</p>
+                
+                <h3>2. Ticket Purchases</h3>
+                <p>All ticket sales are final. Refunds are only available in accordance with the event organizer's refund policy.</p>
+                
+                <h3>3. User Accounts</h3>
+                <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.</p>
+                
+                <h3>4. Prohibited Activities</h3>
+                <p>Users may not engage in fraudulent activities, ticket scalping, or any illegal use of our platform.</p>
+                
+                <h3>5. Limitation of Liability</h3>
+                <p>TicketVault is not liable for any damages arising from the use of our service or attendance at events.</p>
+                
+                <h3>6. Changes to Terms</h3>
+                <p>We reserve the right to modify these terms at any time. Continued use constitutes acceptance of modified terms.</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Privacy Policy Modal */}
+      {showPrivacy && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPrivacy(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
+              <h2 className="text-2xl font-bold text-surface-900 dark:text-white">Privacy Policy</h2>
+              <button
+                onClick={() => setShowPrivacy(false)}
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-colors focus-ring"
+              >
+                <ApperIcon name="X" className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="prose dark:prose-invert max-w-none">
+                <h3>Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us.</p>
+                
+                <h3>How We Use Your Information</h3>
+                <p>We use your information to provide our services, process transactions, communicate with you, and improve our platform.</p>
+                
+                <h3>Information Sharing</h3>
+                <p>We do not sell or rent your personal information to third parties. We may share information with service providers who assist us in operating our platform.</p>
+                
+                <h3>Data Security</h3>
+                <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+                
+                <h3>Cookies</h3>
+                <p>We use cookies and similar technologies to enhance your experience, analyze usage, and provide personalized content.</p>
+                
+                <h3>Your Rights</h3>
+                <p>You have the right to access, update, or delete your personal information. Contact us to exercise these rights.</p>
+                
+                <h3>Contact Us</h3>
+                <p>If you have questions about this Privacy Policy, please contact us at privacy@ticketvault.com.</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
