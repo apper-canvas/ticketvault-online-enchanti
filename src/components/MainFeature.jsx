@@ -370,9 +370,11 @@ return false
     return true
   }
 
-  const handleBackToEvents = () => {
+const handleBackToEvents = () => {
     if (selectedEvent?.isMovie) {
       navigate('/movies')
+    } else if (eventId && eventId.startsWith('sports-')) {
+      navigate('/sports')
     } else {
       navigate('/events')
     }
@@ -664,10 +666,9 @@ setIsProcessingPayment(false)
                 onClick={handleBackToEvents}
                 className="mt-4 sm:mt-0 px-4 py-2 bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-300 rounded-xl transition-colors focus-ring"
               >
-                {selectedEvent?.isMovie ? 'Back to Movies' : 'Back to Events'}
+                {selectedEvent?.isMovie ? 'Back to Movies' : eventId && eventId.startsWith('sports-') ? 'Back to Sports' : 'Back to Events'}
               </motion.button>
             </div>
-
             {/* Seat Legend */}
             <div className="flex flex-wrap gap-6 mb-8 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-xl">
               <div className="flex items-center">
